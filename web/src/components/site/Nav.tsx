@@ -7,6 +7,7 @@ import { useState, type ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
 
 const LINKS = [
+  { href: "/guide", label: "Start here" },
   { href: "/how", label: "How it works" },
   { href: "/app", label: "App" },
   { href: "/deck", label: "Deck" },
@@ -21,7 +22,7 @@ export function Nav({ right }: { right?: ReactNode }) {
   return (
     <header className="sticky top-0 z-40">
       <motion.div
-        className="absolute inset-0 border-b bg-paper/80 backdrop-blur-xl"
+        className="absolute inset-0 border-b bg-paper/[0.94]"
         initial={false}
         animate={{ opacity: scrolled ? 1 : 0 }}
         transition={{ duration: 0.3 }}
@@ -41,8 +42,8 @@ export function Nav({ right }: { right?: ReactNode }) {
               {l.label}
             </Link>
           ))}
-          <Link href="/how" className={`focus-ring px-2.5 py-2 font-[family-name:var(--font-display)] text-[14px] font-semibold uppercase tracking-[0.12em] sm:hidden ${path === "/how" ? "text-ink" : "text-muted"}`}>
-            How
+          <Link href="/guide" className={`focus-ring px-2.5 py-2 font-[family-name:var(--font-display)] text-[14px] font-semibold uppercase tracking-[0.12em] sm:hidden ${path === "/guide" ? "text-ink" : "text-muted"}`}>
+            Guide
           </Link>
           {right ?? (
             <Link href="/app" className="btn btn-ink btn-sm ml-1">

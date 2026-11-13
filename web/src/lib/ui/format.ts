@@ -79,8 +79,9 @@ export function modelName(model: string | undefined): string | null {
 
 export const BOOST_REASON: Record<string, string> = {
   profitable: "Boost pays for itself at today’s veMEZO price.",
-  bid_half_value: "Nobody is paying veMEZO voters this week, so Flywheel bids half of what the extra boost is worth to you.",
+  bid_half_value: "Nobody is paying veMEZO voters yet this week, so Flywheel bids half of what the extra boost is worth to you. The bid goes to whoever votes for your boost.",
   not_worth_it: "Boost would cost more than it earns this week.",
   no_budget: "Set a reinvest budget to let the brain buy boost.",
   at_max: "Already at the 5× maximum.",
+  market_idle: "No veMEZO holders are voting for boosts this week, so a bid would go unclaimed. Your MUSD goes to savings instead.",
 };

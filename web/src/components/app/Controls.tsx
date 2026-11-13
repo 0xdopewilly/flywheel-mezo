@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 
 function Field({ label, value, help, children, htmlFor }: { label: string; value?: ReactNode; help?: ReactNode; children: ReactNode; htmlFor?: string }) {
   return (
@@ -165,18 +165,29 @@ export function AmountField({
   suffix: string;
 }) {
   const id = useId();
+  // Keep what the person typed ("2.", "0.5") as text, so decimals aren't eaten mid-typing.
+  const [text, setText] = useState(Number.isFinite(value) ? String(value) : "");
+  useEffect(() => {
+    if (Number(text) !== value) setText(Number.isFinite(value) ? String(value) : "");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
   return (
     <Field label={label} help={help} htmlFor={id}>
-      <div className="flex h-12 items-center rounded-[3px] bg-paper px-4 focus-within:ring-2 focus-within:ring-red/30">
+      <div className="flex h-12 items-center rounded-[3px] bg-paper px-4 focus-within:ring-2 focus-within:ring-violet-hi/40">
         <input
           id={id}
           inputMode="decimal"
           className="tnum w-full bg-transparent text-[18px] font-semibold tracking-[-0.02em] outline-none"
-          value={Number.isFinite(value) ? String(value) : ""}
+          value={text}
           onChange={(e) => {
-            const v = Number(e.target.value.replace(/[^0-9.]/g, ""));
+            let t = e.target.value.replace(/[^0-9.]/g, "");
+            const dot = t.indexOf(".");
+            if (dot >= 0) t = t.slice(0, dot + 1) + t.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+            setText(t);
+            const v = Number(t);
             onChange(Number.isFinite(v) ? Math.min(v, 1_000_000_000) : 0);
           }}
+          onBlur={() => setText(Number.isFinite(value) ? String(value) : "")}
         />
         <span className="ml-2 shrink-0 text-[14px] font-medium text-muted">{suffix}</span>
       </div>

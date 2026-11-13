@@ -20,19 +20,21 @@ type Props = {
   data?: PlanResponse;
   error?: unknown;
   isFetching?: boolean;
+  /** numbers are in; Claude is still writing the explanation */
+  narrating?: boolean;
   onRetry?: () => void;
   /** smaller paddings for the landing page */
   variant?: "full" | "landing";
 };
 
-export function PlanCard({ tokenId, data, error, isFetching, onRetry, variant = "full" }: Props) {
+export function PlanCard({ tokenId, data, error, isFetching, narrating = false, onRetry, variant = "full" }: Props) {
   const pad = variant === "landing" ? "p-6 sm:p-8" : "p-5 sm:p-8 lg:p-10";
   return (
     <div className={`card relative overflow-hidden ${pad}`}>
       <AnimatePresence mode="wait" initial={false}>
         {data ? (
           <motion.div key="plan" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-            <PlanBody data={data} refreshing={!!isFetching} variant={variant} />
+            <PlanBody data={data} refreshing={!!isFetching} narrating={narrating} variant={variant} />
           </motion.div>
         ) : error ? (
           <motion.div key="err" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -52,7 +54,7 @@ export function PlanCard({ tokenId, data, error, isFetching, onRetry, variant = 
   );
 }
 
-function PlanBody({ data, refreshing, variant }: { data: PlanResponse; refreshing: boolean; variant: "full" | "landing" }) {
+function PlanBody({ data, refreshing, narrating, variant }: { data: PlanResponse; refreshing: boolean; narrating: boolean; variant: "full" | "landing" }) {
   const { plan, market } = data;
   const model = modelName(plan.narrative.model);
   return (
@@ -82,6 +84,11 @@ function PlanBody({ data, refreshing, variant }: { data: PlanResponse; refreshin
       <motion.div animate={{ opacity: refreshing ? 0.55 : 1 }} transition={{ duration: 0.3 }}>
         <h3 className="display balance mt-6 text-[27px] leading-[1.02] sm:text-[36px]">{plan.narrative.headline}</h3>
         <TypeText key={plan.narrative.why} text={plan.narrative.why} className="pretty mt-4 text-[15.5px] leading-[1.68] text-ink/75 sm:text-[16px]" />
+        {narrating && (
+          <p className="mt-3 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-violet-hi">
+            <Loader size={14} /> Claude is writing the full explanation…
+          </p>
+        )}
 
         <Allocation votes={plan.votes} />
 

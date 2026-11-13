@@ -69,7 +69,7 @@ export function Hero() {
 
           {/* the object */}
           <div className="relative -my-4 w-full max-w-[640px]">
-            <div className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet/25 blur-[90px]" aria-hidden />
+            <div className="absolute left-1/2 top-1/2 h-[70%] w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(124,58,237,0.32),transparent_66%)]" aria-hidden />
             <Flywheel3D className="mx-auto aspect-square w-full max-w-[460px]" />
             <button type="button" onClick={() => go(-1)} aria-label="Previous station" className="absolute left-0 top-1/2 hidden h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-ink text-paper transition hover:scale-105 sm:grid md:-left-16">
               <Chevron dir={-1} />
@@ -102,8 +102,8 @@ export function Hero() {
           </motion.div>
 
           <div className="mt-8 flex w-full items-end justify-between gap-4 text-left">
-            <Link href="/how" className="group hidden items-center gap-3 text-[13px] text-ink/80 sm:flex">
-              How the brain decides
+            <Link href="/guide" className="group hidden items-center gap-3 text-[13px] text-ink/80 sm:flex">
+              <span>New to veBTC? Start here</span>
               <span className="h-px w-8 bg-ink/60 transition-all group-hover:w-12" />
             </Link>
             <a href="#live" className="mx-auto text-ink/70 sm:mx-0" aria-label="Scroll to this epoch">

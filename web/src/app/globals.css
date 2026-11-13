@@ -54,12 +54,7 @@
 }
 
 html {
-  background:
-    radial-gradient(1200px 700px at 50% -10%, rgb(124 58 237 / 0.22), transparent 60%),
-    radial-gradient(900px 600px at 100% 40%, rgb(192 38 211 / 0.08), transparent 60%),
-    radial-gradient(900px 700px at 0% 85%, rgb(91 33 182 / 0.12), transparent 60%),
-    var(--color-paper);
-  background-attachment: fixed;
+  background: var(--color-paper);
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
 }
@@ -80,18 +75,20 @@ body {
   overflow-x: hidden;
 }
 
-/* faint HUD grid over everything */
+/* Glow + faint HUD grid, painted once on its own GPU layer (no repaint while scrolling). */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -1;
-  background-image:
-    linear-gradient(rgb(167 139 250 / 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(167 139 250 / 0.035) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+  transform: translateZ(0);
+  background:
+    radial-gradient(1200px 700px at 50% -10%, rgb(124 58 237 / 0.22), transparent 60%),
+    radial-gradient(900px 600px at 100% 40%, rgb(192 38 211 / 0.08), transparent 60%),
+    radial-gradient(900px 700px at 0% 85%, rgb(91 33 182 / 0.12), transparent 60%),
+    linear-gradient(rgb(167 139 250 / 0.03) 1px, transparent 1px) 0 0 / 64px 64px,
+    linear-gradient(90deg, rgb(167 139 250 / 0.03) 1px, transparent 1px) 0 0 / 64px 64px;
 }
 
 ::selection {

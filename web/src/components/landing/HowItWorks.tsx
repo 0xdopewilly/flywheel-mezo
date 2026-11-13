@@ -56,7 +56,7 @@ export function HowItWorks() {
           >
             <p className="hud-num text-[12px] tracking-[0.24em] text-gold">Step 0{i + 1}</p>
             <div className="relative my-6 grid h-[96px] w-[96px] place-items-center">
-              <span className="absolute inset-0 rounded-full bg-violet/20 blur-2xl transition-opacity duration-500 group-hover:opacity-100" aria-hidden />
+              <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.28),transparent_70%)] transition-opacity duration-500 group-hover:opacity-100" aria-hidden />
               <s.Icon />
             </div>
             <h3 className="display text-[26px] tracking-[0.04em]">{s.title}</h3>

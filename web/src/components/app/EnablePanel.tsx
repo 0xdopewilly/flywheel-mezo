@@ -25,7 +25,7 @@ export function toChainPolicy(p: UiPolicy) {
   };
 }
 
-export type PilotStatus = { enrolled: boolean; approved: boolean; live: boolean; policyMatches: boolean };
+export type PilotStatus = { enrolled: boolean; approved: boolean; live: boolean; policyMatches: boolean; musdOk: boolean };
 
 export function EnablePanel({
   tokenId,
@@ -77,11 +77,14 @@ export function EnablePanel({
     enrollment!.policy.minPools === chainPolicy.minPools &&
     enrollment!.policy.autoSave === chainPolicy.autoSave &&
     enrollment!.policy.epochPullCap === chainPolicy.epochPullCap;
+  // The allowance covers several weeks of budget; the contract still pulls at most one budget per epoch.
   const musdOk = chainPolicy.epochPullCap === 0n || allowance >= chainPolicy.epochPullCap;
+  const weeksLeft = chainPolicy.epochPullCap === 0n ? 0 : Number(allowance / chainPolicy.epochPullCap);
+  const allowanceTarget = chainPolicy.epochPullCap * BigInt(BUDGET_WEEKS);
 
   useEffect(() => {
-    onStatus?.({ enrolled, approved, live, policyMatches });
-  }, [enrolled, approved, live, policyMatches, onStatus]);
+    onStatus?.({ enrolled, approved, live, policyMatches, musdOk });
+  }, [enrolled, approved, live, policyMatches, musdOk, onStatus]);
 
   const { writeContractAsync } = useWriteContract();
   const approveTx = useTx();
@@ -169,9 +172,15 @@ export function EnablePanel({
         <Step
           n={3}
           optional
-          title={`Allow ${fmtMusd(policy.pullCap)} MUSD a week`}
-          desc="Approves exactly your weekly reinvest budget, so the brain can move it into your Savings Vault or your own boost gauge."
-          state={chainPolicy.epochPullCap === 0n ? "skipped" : musdOk ? "done" : "ready"}
+          title={musdOk && allowance > 0n ? `Reinvest budget: ${weeksLeft >= BUDGET_WEEKS ? BUDGET_WEEKS : weeksLeft} week${weeksLeft === 1 ? "" : "s"} allowed` : `Allow ${fmtMusd(policy.pullCap)} MUSD a week`}
+          desc={
+            musdOk && allowance > 0n
+              ? `MUSD allowance left: ${fmtMusd(Number(allowance) / 1e18)}. The contract still never pulls more than ${fmtMusd(policy.pullCap)} MUSD in a week, and only into your Savings Vault or your own boost gauge.${weeksLeft <= 2 ? " Top it up soon so reinvesting doesn’t pause." : ""}`
+              : allowance > 0n
+                ? `Only ${fmtMusd(Number(allowance) / 1e18)} MUSD of allowance is left, less than one week’s budget, so reinvesting is paused. Top it up for another ${BUDGET_WEEKS} weeks.`
+                : `Lets the brain use up to ${fmtMusd(policy.pullCap)} MUSD from your wallet each week for ${BUDGET_WEEKS} weeks (${fmtMusd(policy.pullCap * BUDGET_WEEKS)} MUSD allowance). The contract enforces the weekly limit, and the MUSD only goes to your Savings Vault or your own boost gauge.`
+          }
+          state={chainPolicy.epochPullCap === 0n ? "skipped" : musdOk && weeksLeft > 2 ? "done" : "ready"}
           tx={musdTx.state}
           action={
             <button
@@ -185,13 +194,13 @@ export function EnablePanel({
                     address: MEZO.musd,
                     abi: erc20Abi,
                     functionName: "approve",
-                    args: [pilot, chainPolicy.epochPullCap],
+                    args: [pilot, allowanceTarget],
                   }),
                 );
                 if (ok) refresh();
               }}
             >
-              Approve
+              {allowance > 0n ? "Top up" : "Approve"}
             </button>
           }
         />
@@ -206,6 +215,9 @@ export function EnablePanel({
 }
 
 const fmtMusd = (v: number) => v.toLocaleString("en-US", { maximumFractionDigits: 2 });
+
+/** How many weeks of reinvest budget one MUSD approval covers. */
+export const BUDGET_WEEKS = 12;
 
 export function Shell({ title, badge, children, right }: { title: string; badge?: string; children: ReactNode; right?: ReactNode }) {
   return (

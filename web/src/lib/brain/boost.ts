@@ -22,7 +22,7 @@ export type BoostDecision = {
   /** USD per veMEZO vote the market currently pays. */
   usdPerVeMezo: number;
   curve: { spend: number; multiplier: number; net: number }[];
-  reason: "profitable" | "bid_half_value" | "not_worth_it" | "no_budget" | "at_max";
+  reason: "profitable" | "bid_half_value" | "not_worth_it" | "no_budget" | "at_max" | "market_idle";
   /** veMEZO votes the bid is aiming to attract (bid mode) or expected to attract (priced mode). */
   targetVeMezo: number;
 };
@@ -42,8 +42,10 @@ export function planBoost(args: {
   veMezoTotal: number;
   usdPerVeMezo: number;
   budgetUsd: number;
+  /** Are veMEZO holders voting on any boost gauge this epoch? If not, incentives would sit unclaimed. */
+  marketActive?: boolean;
 }): BoostDecision {
-  const { gauges, cap, minPools, nftUnboosted, currentGaugeVeMezo, veBtcTotal, veMezoTotal, usdPerVeMezo, budgetUsd } = args;
+  const { gauges, cap, minPools, nftUnboosted, currentGaugeVeMezo, veBtcTotal, veMezoTotal, usdPerVeMezo, budgetUsd, marketActive = true } = args;
   const from = boostMultiplier(veBtcTotal, nftUnboosted, currentGaugeVeMezo, veMezoTotal);
   const base = allocate(gauges, nftUnboosted * from, { cap, minPools }).expected;
   const empty = (reason: BoostDecision["reason"]): BoostDecision => ({
@@ -59,6 +61,10 @@ export function planBoost(args: {
   });
   if (from >= 4.999) return empty("at_max");
   if (budgetUsd <= 0) return empty("no_budget");
+
+  // Incentives on a boost gauge are paid to the veMEZO that votes for it. If nobody votes boosts at all,
+  // a bid would sit unclaimed (and in reward contracts like these, an epoch with no votes can't be claimed later).
+  if (usdPerVeMezo <= 0 && !marketActive && currentGaugeVeMezo <= 0) return empty("market_idle");
 
   if (usdPerVeMezo <= 0) {
     // Nobody is paying veMEZO voters this epoch, so there is no price to follow. Bid half of what

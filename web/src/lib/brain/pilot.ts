@@ -59,7 +59,13 @@ export async function readEnrollment(tokenId: bigint): Promise<{ enrollment: Enr
 
 /** MUSD the pilot could compound right now: owner balance, allowance and the epoch cap all bind. */
 export async function compoundableMusd(tokenId: bigint, owner: Address): Promise<bigint> {
-  if (!PILOT_ADDRESS) return 0n;
+  const p = await compoundLimits(tokenId, owner);
+  return p ? p.min : 0n;
+}
+
+/** The three things that bound a compound, so a skip can say exactly which one stopped it. */
+export async function compoundLimits(tokenId: bigint, owner: Address) {
+  if (!PILOT_ADDRESS) return null;
   const c = publicClient();
   const [bal, allowance, remaining] = await Promise.all([
     c.readContract({ address: MEZO.musd, abi: erc20Abi, functionName: "balanceOf", args: [owner] }),
@@ -67,7 +73,7 @@ export async function compoundableMusd(tokenId: bigint, owner: Address): Promise
     c.readContract({ address: pilotAddress(), abi: pilotAbi, functionName: "remainingPull", args: [tokenId] }),
   ]);
   const m = [bal as bigint, allowance as bigint, remaining as bigint];
-  return m.reduce((a, b) => (b < a ? b : a));
+  return { balance: m[0], allowance: m[1], remaining: m[2], min: m.reduce((a, b) => (b < a ? b : a)) };
 }
 
 export type Action = { kind: "vote" | "harvest" | "compound" | "skip"; tx?: Hex; reason: string };
@@ -99,7 +105,14 @@ async function send(fn: PilotFn, args: readonly unknown[]): Promise<Hex> {
  * One keeper pass for one veBTC: vote if it hasn't this epoch, harvest anything claimable, then
  * compound MUSD the owner made available. Every step is checked again by the contract.
  */
-export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promise<{ actions: Action[]; plan?: Plan }> {
+/** The scheduled keeper votes late, once the week's incentives are posted: from this long before the window closes. */
+export const LATE_VOTE_SECONDS = 30 * 3600;
+
+export async function runPilot(
+  tokenId: bigint,
+  market?: MarketSnapshot,
+  mode: "manual" | "cron" = "manual",
+): Promise<{ actions: Action[]; plan?: Plan }> {
   const actions: Action[] = [];
   const en = await readEnrollment(tokenId);
   if (!en || !en.enrollment.active) return { actions: [{ kind: "skip", reason: "This veBTC is not enrolled." }] };
@@ -109,25 +122,37 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
   const nft = await snapshotNft(tokenId, m);
   const policy = toPolicyInput(en.enrollment.policy);
   const musdAvail = await compoundableMusd(tokenId, en.enrollment.owner);
-  const plan = await finalize(buildCore(m, nft, policy, Number(musdAvail) / 1e18));
+  const feeBps = Number(await publicClient().readContract({ address: pilotAddress(), abi: pilotAbi, functionName: "feeBps" }));
   const now = Math.floor(Date.now() / 1000);
+  const inWindow = now >= m.epoch + 3600 && now <= m.voteClosesAt;
+  const willVote = !nft.votedThisEpoch && inWindow && nft.power > 0 && (mode === "manual" || now >= m.voteClosesAt - LATE_VOTE_SECONDS);
+  // the model only writes the explanation when it will be published with a vote
+  const plan = await finalize(buildCore(m, nft, policy, Number(musdAvail) / 1e18, feeBps), { narrate: willVote });
 
   // 1. vote
   if (nft.votedThisEpoch) {
-    actions.push({ kind: "skip", reason: "Already voted this epoch; the next vote opens Thursday 01:00 UTC." });
+    actions.push({ kind: "skip", reason: "Already voted this epoch. Mezo allows one vote per veBTC per week, so the next vote is Thursday from 01:00 UTC." });
   } else if (now < m.epoch + 3600 || now > m.voteClosesAt) {
     actions.push({ kind: "skip", reason: "Outside Mezo's voting window (it opens 1 hour after the epoch starts and closes 1 hour before it ends)." });
+  } else if (mode === "cron" && now < m.voteClosesAt - LATE_VOTE_SECONDS) {
+    actions.push({ kind: "skip", reason: "Waiting to vote late in the epoch, when this week’s incentives are known. The scheduled vote is from Tuesday 20:00 UTC." });
   } else if (plan.votes.length === 0 || nft.power <= 0) {
-    actions.push({ kind: "skip", reason: "No voting power to allocate." });
+    actions.push({ kind: "skip", reason: "This veBTC has no voting power right now, most likely because its lock expired. Extend the lock on Mezo to keep earning." });
   } else {
     const pools = plan.votes.map((v) => v.pool);
     const weights = plan.votes.map((v) => BigInt(v.bps));
-    const tx = await send("vote", [tokenId, pools, weights, toHex(plan.json)]);
-    actions.push({ kind: "vote", tx, reason: plan.narrative.headline });
+    try {
+      const tx = await send("vote", [tokenId, pools, weights, toHex(plan.json)]);
+      actions.push({ kind: "vote", tx, reason: plan.narrative.headline });
+    } catch (e) {
+      actions.push({ kind: "skip", reason: `The vote didn’t go through (${(e as Error).message.slice(0, 120)}). Nothing was spent; the next run tries again.` });
+    }
   }
 
   // 2. harvest everything claimable (Mezo pays it to the owner)
-  if (nft.claimable.length) {
+  if (!nft.claimable.length) {
+    actions.push({ kind: "skip", reason: "Nothing to harvest yet. A vote’s rewards become claimable when its epoch ends (Thursday 00:00 UTC)." });
+  } else {
     const group = (kind: "incentive" | "fee") => {
       const by = new Map<Address, Address[]>();
       for (const cl of nft.claimable.filter((x) => x.kind === kind)) {
@@ -147,23 +172,45 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
     }
   }
 
-  // 3. compound
-  const musd = await compoundableMusd(tokenId, en.enrollment.owner);
-  if (musd >= 10n ** 18n) {
-    const boostBps = Math.min(plan.compound.boostPct * 100, en.enrollment.policy.boostShareBps);
-    const finalBps = en.enrollment.policy.autoSave ? boostBps : 10_000;
-    if (!en.enrollment.policy.autoSave && en.enrollment.policy.boostShareBps < 10_000) {
-      actions.push({ kind: "skip", reason: "Savings are off and the boost share is below 100%, so there is nothing to compound into." });
-    } else {
-      const tx = await send("compound", [tokenId, musd, finalBps, plan.hash]);
+  // 3. compound exactly what the published plan says, never more than wallet, allowance and weekly cap allow
+  const lim = await compoundLimits(tokenId, en.enrollment.owner);
+  const one = 10n ** 18n;
+  const planned = BigInt(Math.round(plan.compound.musd * 100)) * 10n ** 16n;
+  const amount = lim ? (lim.min < planned ? lim.min : planned) : 0n;
+  if (amount >= one) {
+    const boostBps = en.enrollment.policy.autoSave ? Math.min(plan.compound.boostPct * 100, en.enrollment.policy.boostShareBps) : 10_000;
+    try {
+      const tx = await send("compound", [tokenId, amount, boostBps, plan.hash]);
+      const musdTxt = (Number(amount) / 1e18).toFixed(2);
       actions.push({
         kind: "compound",
         tx,
-        reason: `Compounded ${(Number(musd) / 1e18).toFixed(2)} MUSD: ${finalBps / 100}% to boost incentives, the rest to the Savings Vault.`,
+        reason:
+          boostBps >= 10_000
+            ? `Reinvested ${musdTxt} MUSD, all of it as boost incentives (savings is off).`
+            : boostBps > 0
+              ? `Reinvested ${musdTxt} MUSD: after the ${feeBps / 100}% fee, ${boostBps / 100}% became boost incentives and the rest went to your Savings Vault.`
+              : `Reinvested ${musdTxt} MUSD into your Savings Vault (after the ${feeBps / 100}% fee).`,
       });
+    } catch (e) {
+      actions.push({ kind: "skip", reason: `The reinvest didn’t go through (${(e as Error).message.slice(0, 120)}). Nothing was moved; the next run tries again.` });
     }
   } else {
-    actions.push({ kind: "skip", reason: "No MUSD made available to compound (balance, allowance or this epoch's cap)." });
+    const why =
+      nft.power <= 0
+        ? "Nothing reinvested: this veBTC has no voting power (its lock may have expired), so there is nothing for MUSD to grow."
+        : !en.enrollment.policy.autoSave && plan.boost.spendUsd <= 0
+          ? "Nothing reinvested: savings is off and buying boost isn’t worth it this week, so your MUSD stays in your wallet."
+          : !lim
+            ? "No MUSD to reinvest."
+            : lim.remaining < one
+              ? "This week’s reinvest budget is already used. It resets Thursday 00:00 UTC."
+              : lim.balance < one
+                ? "Your wallet has no MUSD to reinvest. Harvested rewards, or MUSD you add, get reinvested on a later run."
+                : lim.allowance < one
+                  ? "No MUSD allowance left, so reinvesting is paused. Allow a weekly budget in the autopilot panel."
+                  : "Less than 1 MUSD to reinvest this time, so it waits for more.";
+    actions.push({ kind: "skip", reason: why });
   }
 
   return { actions, plan };
@@ -253,7 +300,8 @@ export async function positionsOf(owner: Address) {
         lockedBtc: Number(l[0]) / 1e18,
         lockEnd: Number(l[1]),
         permanent: Boolean(l[2]),
-        enrolled: Boolean(en?.enrollment.active),
+        // an enrollment left by a previous owner doesn't count for this wallet
+        enrolled: Boolean(en?.enrollment.active) && en!.enrollment.owner.toLowerCase() === owner.toLowerCase(),
         live: Boolean(en?.live),
         policy: en
           ? { ...en.enrollment.policy, epochPullCap: (Number(en.enrollment.policy.epochPullCap) / 1e18).toString() }

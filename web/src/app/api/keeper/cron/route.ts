@@ -9,7 +9,8 @@ export const maxDuration = 300;
 
 /** Scheduled keeper pass over every enrolled veBTC (Vercel Cron sends the CRON_SECRET bearer). */
 export async function GET(req: NextRequest) {
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
   const ids = (await publicClient().readContract({ address: pilotAddress(), abi: pilotAbi, functionName: "enrolledIds" })) as bigint[];
@@ -17,7 +18,7 @@ export async function GET(req: NextRequest) {
   const results: { tokenId: string; actions?: unknown; error?: string }[] = [];
   for (const id of ids) {
     try {
-      const { actions } = await runPilot(id, market);
+      const { actions } = await runPilot(id, market, "cron");
       results.push({ tokenId: id.toString(), actions });
     } catch (e) {
       results.push({ tokenId: id.toString(), error: (e as Error).message.slice(0, 200) });

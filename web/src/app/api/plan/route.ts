@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { memo } from "@/lib/brain/cache";
 import { buildCore, finalize, DEFAULT_POLICY, type PolicyInput } from "@/lib/brain/plan";
-import { snapshotMarket, snapshotNft } from "@/lib/brain/snapshot";
+import { sharedMarket, sharedNft } from "@/lib/brain/shared";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -21,11 +21,13 @@ export async function GET(req: NextRequest) {
     autoSave: q.get("autoSave") !== "0",
   };
   const musd = clamp(num("musd", 0), 0, 1e9);
-  const key = `plan:${tokenId}:${policy.cap}:${policy.minPools}:${policy.boostShare}:${policy.autoSave}:${musd}`;
+  // fast=1 answers in a couple of seconds with a template explanation; the app then asks again for Claude's.
+  const fast = q.get("fast") === "1";
+  const key = `plan:${tokenId}:${policy.cap}:${policy.minPools}:${policy.boostShare}:${policy.autoSave}:${musd}:${fast ? "f" : "n"}`;
   try {
-    const market = await memo("market", 60_000, snapshotMarket);
-    const nft = await memo(`nft:${tokenId}:${market.block}`, 60_000, () => snapshotNft(tokenId, market));
-    const plan = await memo(key + ":" + market.block, 180_000, () => finalize(buildCore(market, nft, policy, musd)));
+    const market = await memo("market", 30_000, sharedMarket);
+    const nft = await memo(`nft:${tokenId}:${market.block}`, 30_000, () => sharedNft(tokenId.toString()));
+    const plan = await memo(key + ":" + market.block, 180_000, () => finalize(buildCore(market, nft, policy, musd), { narrate: !fast }));
     return NextResponse.json({
       plan: { ...plan, json: undefined },
       nft,

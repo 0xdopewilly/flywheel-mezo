@@ -1,7 +1,7 @@
 import { keccak256, toBytes, type Address } from "viem";
 import { allocate, baselines, type GaugeInput } from "./optimize";
 import { planBoost } from "./boost";
-import { narrate, type Narrative } from "./narrate";
+import { narrate, template, type Narrative } from "./narrate";
 import { snapshotMarket, snapshotNft, type MarketSnapshot, type NftSnapshot } from "./snapshot";
 
 export type PolicyInput = { cap: number; minPools: number; boostShare: number; autoSave: boolean };
@@ -34,7 +34,10 @@ const r2 = (v: number) => Math.round(v * 100) / 100;
 const r4 = (v: number) => Math.round(v * 10_000) / 10_000;
 const pct = (a: number, b: number) => (b > 0 ? Math.round(((a - b) / b) * 100) : 0);
 
-export function buildCore(market: MarketSnapshot, nft: NftSnapshot, policy: PolicyInput, musdAvailable: number): PlanCore {
+/** Flywheel's fee on reinvested MUSD, in bps (read from the contract by the keeper; 5% is the deployed value). */
+export const DEFAULT_FEE_BPS = 500;
+
+export function buildCore(market: MarketSnapshot, nft: NftSnapshot, policy: PolicyInput, musdAvailable: number, feeBps = DEFAULT_FEE_BPS): PlanCore {
   // others = votes on the gauge minus this NFT's own current vote (if it already voted this epoch)
   const inputs: GaugeInput[] = market.gauges.map((g) => ({
     id: g.pool,
@@ -45,8 +48,11 @@ export function buildCore(market: MarketSnapshot, nft: NftSnapshot, policy: Poli
   const alloc = allocate(inputs, V, { cap: policy.cap, minPools: policy.minPools });
   const base = baselines(inputs, V, policy.cap);
 
-  const claimableMusd = nft.claimable.filter((c) => c.symbol === "MUSD").reduce((s, c) => s + c.amount, 0);
-  const compoundMusd = Math.max(0, Math.min(musdAvailable, claimableMusd > 0 ? claimableMusd : musdAvailable));
+  // Reinvest: the keeper pulls `compoundMusd`, the contract takes the fee, then splits the rest by boostPct.
+  // A veBTC with no voting power (expired lock) gets nothing reinvested: there is nothing left to grow.
+  const fee = feeBps / 10_000;
+  const avail = V > 0 ? Math.max(0, musdAvailable) : 0;
+  const afterFee = avail * (1 - fee);
   const boost = planBoost({
     gauges: inputs,
     cap: policy.cap,
@@ -56,9 +62,23 @@ export function buildCore(market: MarketSnapshot, nft: NftSnapshot, policy: Poli
     veBtcTotal: market.boost.veBtcTotalUnboosted,
     veMezoTotal: market.boost.veMezoTotal,
     usdPerVeMezo: market.boost.usdPerVeMezo,
-    budgetUsd: compoundMusd * policy.boostShare,
+    budgetUsd: afterFee * (policy.autoSave ? policy.boostShare : 1),
+    marketActive: (market.boost.votedGauges ?? 1) > 0,
   });
-  const boostPct = compoundMusd > 0 ? Math.min(policy.boostShare, boost.spendUsd / compoundMusd) : 0;
+  let compoundMusd: number;
+  let boostPct: number;
+  if (avail <= 0) {
+    compoundMusd = 0;
+    boostPct = 0;
+  } else if (policy.autoSave) {
+    // pull the whole available budget; boost gets exactly what the brain priced, savings gets the rest
+    compoundMusd = avail;
+    boostPct = Math.min(policy.boostShare, boost.spendUsd / afterFee);
+  } else {
+    // savings off: the contract only allows "all to boost", so pull just enough for the priced bid
+    compoundMusd = boost.spendUsd > 0 ? Math.min(avail, boost.spendUsd / (1 - fee)) : 0;
+    boostPct = compoundMusd > 0 ? 1 : 0;
+  }
 
   const votes = market.gauges
     .map((g, i) => ({
@@ -102,16 +122,16 @@ export function buildCore(market: MarketSnapshot, nft: NftSnapshot, policy: Poli
     },
     harvest: { claimableUsd: r2(nft.claimable.reduce((s, c) => s + c.usd, 0)), claims: nft.claimable.length },
     compound: {
-      musd: r2(compoundMusd),
+      musd: Math.floor(compoundMusd * 100) / 100,
       boostPct: Math.round(boostPct * 100),
-      savePct: policy.autoSave ? 100 - Math.round(boostPct * 100) : 0,
+      savePct: compoundMusd > 0 && policy.autoSave ? 100 - Math.round(boostPct * 100) : 0,
     },
     prices: { btc: Math.round(market.prices.btc), mezo: Number(market.prices.mezo.toPrecision(3)), source: market.prices.source },
   };
 }
 
-export async function finalize(core: PlanCore): Promise<Plan> {
-  const narrative = await narrate(core);
+export async function finalize(core: PlanCore, opts: { narrate?: boolean } = {}): Promise<Plan> {
+  const narrative = opts.narrate === false ? { ...template(core), model: "template" } : await narrate(core);
   const published = { ...core, headline: narrative.headline, why: narrative.why, model: narrative.model };
   const json = JSON.stringify(published);
   return { ...core, narrative, json, hash: keccak256(toBytes(json)) };

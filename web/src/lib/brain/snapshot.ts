@@ -43,6 +43,8 @@ export type BoostMarket = {
   /** Median USD of incentives a boost gauge pays per veMEZO vote this epoch, from a sample. */
   usdPerVeMezo: number;
   sampled: number;
+  /** Sampled boost gauges that have any veMEZO votes this epoch. 0 means nobody is voting boosts at all. */
+  votedGauges: number;
 };
 
 const LABELS: Record<string, string> = {
@@ -285,9 +287,11 @@ async function boostMarket(prices: Prices, epoch: number): Promise<BoostMarket> 
     usdByGauge.set(k, (usdByGauge.get(k) ?? 0) + usdOf(s, num(br[j].result as bigint), prices));
   });
   const rates: number[] = [];
+  let votedGauges = 0;
   gs.forEach((_, k) => {
     const w = wb[k * 2].status === "success" ? num(wb[k * 2].result as bigint) : 0;
     const usd = usdByGauge.get(k) ?? 0;
+    if (w > 0) votedGauges++;
     if (w > 0 && usd > 0) rates.push(usd / w);
   });
   rates.sort((a, b) => a - b);
@@ -297,6 +301,7 @@ async function boostMarket(prices: Prices, epoch: number): Promise<BoostMarket> 
     veMezoTotal: num(veMezoTotal as bigint),
     usdPerVeMezo: median,
     sampled: rates.length,
+    votedGauges,
   };
 }
 
@@ -342,10 +347,17 @@ export async function snapshotNft(tokenId: bigint, market: MarketSnapshot): Prom
     if (v > 0) currentVotes[g.pool] = v;
   });
 
-  // claimable: everything the reward contracts say this NFT has earned
+  // claimable: everything the reward contracts say this NFT has earned. Besides the tokens posted in the last
+  // two epochs, always ask about Mezo's base tokens, so rewards from older epochs aren't missed.
+  const BASE: [Address, string][] = [
+    [MEZO.musd, "MUSD"],
+    [MEZO.mezo, "MEZO"],
+    [MEZO.btc, "BTC"],
+  ];
   const earnCalls = market.gauges.flatMap((g) => [
     ...[...g.incentives, ...g.feesLastEpoch, ...g.feesThisEpoch].map((t) => t.token),
-  ].filter((t, i, a) => a.indexOf(t) === i).flatMap((t) => [
+    ...BASE.map(([t]) => t),
+  ].filter((t, i, a) => a.findIndex((x) => x.toLowerCase() === t.toLowerCase()) === i).flatMap((t) => [
     { contract: g.bribe, kind: "incentive" as const, pool: g.pool, token: t },
     { contract: g.fees, kind: "fee" as const, pool: g.pool, token: t },
   ]));
@@ -353,7 +365,7 @@ export async function snapshotNft(tokenId: bigint, market: MarketSnapshot): Prom
     contracts: earnCalls.map((e) => ({ address: e.contract, abi: rewardAbi, functionName: "earned", args: [e.token, tokenId] }) as const),
     allowFailure: true,
   });
-  const symbols = new Map<string, string>();
+  const symbols = new Map<string, string>(BASE.map(([t, s]) => [t.toLowerCase(), s]));
   market.gauges.forEach((g) =>
     [...g.incentives, ...g.feesLastEpoch, ...g.feesThisEpoch].forEach((t) => symbols.set(t.token.toLowerCase(), t.symbol)),
   );

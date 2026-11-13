@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { revalidateTag } from "next/cache";
 import { invalidate } from "@/lib/brain/cache";
 import { runPilot } from "@/lib/brain/pilot";
 
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
   try {
     const { actions, plan } = await runPilot(BigInt(tokenId));
     invalidate(`nft:${tokenId}`);
+    revalidateTag("nft");
     invalidate("market");
     return NextResponse.json({ actions, plan: plan ? { ...plan, json: undefined } : undefined });
   } catch (e) {

@@ -8,7 +8,8 @@ import type { Address } from "viem";
 import { useWriteContract } from "wagmi";
 import { api } from "@/lib/ui/api";
 import { pilotAbi } from "@/lib/mezo/pilotAbi";
-import { PILOT_ADDRESS, txUrl } from "@/lib/mezo/chain";
+import { MEZO, PILOT_ADDRESS, txUrl } from "@/lib/mezo/chain";
+import { erc20Abi, veAbi } from "@/lib/mezo/abis";
 import type { RunAction } from "@/lib/ui/types";
 import { FlywheelMark } from "@/components/brand/FlywheelMark";
 import { STATION_ICONS } from "@/components/brand/StationIcons";
@@ -27,7 +28,7 @@ const KIND: Record<RunAction["kind"], { label: string; icon: number | null }> = 
 };
 
 /** "Let the brain act now", its receipts, and the exit door. */
-export function RunPanel({ tokenId, live, onExited }: { tokenId: string; live: boolean; onExited: () => void }) {
+export function RunPanel({ tokenId, live, onExited, unsaved = false }: { tokenId: string; live: boolean; onExited: () => void; unsaved?: boolean }) {
   const qc = useQueryClient();
   const run = useMutation({
     mutationFn: () => api.run(tokenId),
@@ -48,9 +49,15 @@ export function RunPanel({ tokenId, live, onExited }: { tokenId: string; live: b
       }
     >
       <p className="pretty text-[14px] leading-relaxed text-muted">
-        The keeper runs every epoch on its own. You can also ask it to plan and act right away: vote, harvest what is claimable, and reinvest within your
-        budget. Each step is re-checked by the contract.
+        The keeper runs on its own every day at 20:00 UTC and votes late in the week, once incentives are known. You can also ask it to act right
+        away: vote (once per epoch), harvest what is claimable, and reinvest within your budget. Each step is re-checked by the contract.
       </p>
+      {unsaved && (
+        <p className="mt-3 border-l-2 border-gold pl-3 text-[13.5px] leading-relaxed text-gold">
+          You changed your limits but haven’t saved them. The brain always follows your saved limits, so save them above first, or the run uses the
+          old ones.
+        </p>
+      )}
       <button type="button" className="btn btn-ink mt-5 w-full sm:w-auto" disabled={!live || run.isPending} onClick={() => run.mutate()}>
         {run.isPending ? (
           <>
@@ -120,6 +127,9 @@ function ActionRow({ a }: { a: RunAction }) {
 function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; tokenId: string; onClose: () => void; onExited: () => void }) {
   const { writeContractAsync } = useWriteContract();
   const tx = useTx();
+  const nftTx = useTx();
+  const musdTx = useTx();
+  const [exited, setExited] = useState(false);
   const busy = tx.state.status === "signing" || tx.state.status === "mining";
   if (typeof document === "undefined") return null;
   // (cast: @types/react-dom resolves a newer ReactNode than @types/react 18 here)
@@ -127,7 +137,7 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 backdrop-blur-[3px] sm:items-center"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 sm:items-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -144,13 +154,47 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
             transition={{ duration: 0.45, ease: EASE }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 id="exit-title" className="text-[21px] font-semibold tracking-[-0.02em]">
-              Stop the autopilot for veBTC #{tokenId}?
+            <h3 id="exit-title" className="display text-[26px] leading-none">
+              {exited ? "Autopilot stopped" : (
+                <>
+                  Stop the autopilot for <span className="normal-case">ve</span>BTC #{tokenId}?
+                </>
+              )}
             </h3>
             <p className="pretty mt-3 text-[15px] leading-relaxed text-muted">
-              The brain stops voting, harvesting and reinvesting for it. Your current votes stay until you change them, and the NFT never left your
-              wallet. You can also revoke the approval afterwards.
+              {exited
+                ? "Flywheel will no longer act for this veBTC. To leave nothing behind, you can also remove the two permissions you gave it:"
+                : "The brain stops voting, harvesting and reinvesting for it. Votes already cast this epoch stay until it ends, and the NFT never left your wallet."}
             </p>
+            {exited && (
+              <div className="mt-5 flex flex-col gap-2.5">
+                {[
+                  {
+                    t: nftTx,
+                    label: "Revoke the NFT approval",
+                    run: () => writeContractAsync({ chainId: MEZO_TESTNET_ID, address: MEZO.veBTC, abi: veAbi, functionName: "approve", args: ["0x0000000000000000000000000000000000000000", BigInt(tokenId)] }),
+                  },
+                  {
+                    t: musdTx,
+                    label: "Revoke the MUSD allowance",
+                    run: () => writeContractAsync({ chainId: MEZO_TESTNET_ID, address: MEZO.musd, abi: erc20Abi, functionName: "approve", args: [PILOT_ADDRESS as Address, 0n] }),
+                  },
+                ].map(({ t, label, run }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    className="btn btn-ghost btn-sm justify-between"
+                    disabled={t.state.status === "signing" || t.state.status === "mining" || t.state.status === "done"}
+                    onClick={() => t.run(run)}
+                  >
+                    {label}
+                    <span className="text-[11px] tracking-[0.12em] text-muted">
+                      {t.state.status === "done" ? "Done" : t.state.status === "signing" ? "Confirm…" : t.state.status === "mining" ? "Confirming…" : t.state.status === "error" ? "Retry" : "Optional"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
             {tx.state.status !== "idle" && (
               <p className={`mt-4 text-[14px] ${tx.state.status === "error" ? "text-red" : "text-ink/80"}`}>
                 {tx.state.status === "signing" && "Confirm in your wallet…"}
@@ -165,6 +209,12 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
               </p>
             )}
             <div className="mt-7 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+              {exited ? (
+                <button type="button" className="btn btn-ink" onClick={onClose}>
+                  Done
+                </button>
+              ) : (
+              <>
               <button type="button" className="btn btn-ghost" onClick={onClose} disabled={busy}>
                 Keep it running
               </button>
@@ -178,13 +228,15 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
                   );
                   if (ok) {
                     onExited();
-                    setTimeout(onClose, 900);
+                    setExited(true);
                   }
                 }}
               >
                 {busy ? <FlywheelMark size={20} spinning className="text-[#fff]" /> : null}
                 Exit autopilot
               </button>
+              </>
+              )}
             </div>
           </motion.div>
         </motion.div>

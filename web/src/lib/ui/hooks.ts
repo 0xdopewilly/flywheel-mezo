@@ -65,6 +65,30 @@ export function useCachedQuery<T>(key: QueryKey, fn: () => Promise<T>, opts?: { 
   return q;
 }
 
+/**
+ * The plan in two phases: a fast answer (numbers + template explanation, ~2 s) and Claude's explanation
+ * (5-15 s more). Shows the freshest real answer and says when the explanation is still being written.
+ */
+export function useTwoPhasePlan<T>(key: QueryKey, fast: () => Promise<T>, full: () => Promise<T>, opts?: { enabled?: boolean; staleTime?: number }) {
+  const f = useCachedQuery([...(key as unknown[]), "fast"], fast, opts);
+  const n = useCachedQuery(key, full, opts);
+  const nReal = n.data !== undefined && !n.isPlaceholderData;
+  const fReal = f.data !== undefined && !f.isPlaceholderData;
+  const data = nReal ? n.data : fReal ? f.data : (n.data ?? f.data);
+  const refreshing = !nReal && !fReal && data !== undefined;
+  const narrating = !nReal && fReal && n.isFetching;
+  return {
+    data,
+    error: data ? undefined : (n.error ?? f.error),
+    refreshing,
+    narrating,
+    refetch: () => {
+      f.refetch();
+      n.refetch();
+    },
+  };
+}
+
 export function usePrefersReducedMotion() {
   const [r, setR] = useState(false);
   useEffect(() => {

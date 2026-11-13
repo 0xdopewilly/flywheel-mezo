@@ -55,7 +55,7 @@ Your veBTC never leaves your wallet. You `approve` the contract on the NFT and `
 | Sold or moved the NFT | every action reverts `OwnerChanged` |
 | Want out | `exit()` any time, or revoke the NFT approval |
 
-Fees are hard-capped at 10% in code (`MAX_FEE_BPS`) and set to 5%. They're taken only on MUSD that's compounded, never on votes or harvests. Boost incentives only ever go to the owner's own boost gauge, and savings receipts only ever go to the owner.
+Fees are hard-capped at 10% in code (`MAX_FEE_BPS`) and set to 5%. They're taken only on MUSD that's compounded, never on votes or harvests. Boost incentives only ever go to the owner's own boost gauge, where they pay the veMEZO holders who vote to boost it (that's the price of the boost, and it doesn't come back to the owner). Savings receipts only ever go to the owner. The brain doesn't bid at all when nobody is voting boosts, so incentives can't sit unclaimed.
 
 ## Proof it works
 

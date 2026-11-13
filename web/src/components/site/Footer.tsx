@@ -19,6 +19,9 @@ export function Footer() {
             <Link className="link-underline hover:text-ink" href="/app">
               Launch app
             </Link>
+            <Link className="link-underline hover:text-ink" href="/guide">
+              Start here
+            </Link>
             <Link className="link-underline hover:text-ink" href="/deck">
               Deck
             </Link>

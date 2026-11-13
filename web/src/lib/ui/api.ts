@@ -45,8 +45,8 @@ async function request<T>(path: string, init?: RequestInit & { timeoutMs?: numbe
 
 export const api = {
   market: () => request<MarketSnapshot>("/api/market", { timeoutMs: 40_000 }),
-  plan: (tokenId: string, p: UiPolicy, musd: number) =>
-    request<PlanResponse>(`/api/plan?${planQuery(tokenId, p, musd)}`, { timeoutMs: 60_000 }),
+  plan: (tokenId: string, p: UiPolicy, musd: number, fast = false) =>
+    request<PlanResponse>(`/api/plan?${planQuery(tokenId, p, musd)}${fast ? "&fast=1" : ""}`, { timeoutMs: 60_000 }),
   positions: (owner: string) => request<PositionsResponse>(`/api/positions?owner=${owner}`, { timeoutMs: 40_000 }),
   journal: (tokenId: string) => request<JournalResponse>(`/api/journal?tokenId=${tokenId}`, { timeoutMs: 40_000 }),
   faucet: (address: string) =>

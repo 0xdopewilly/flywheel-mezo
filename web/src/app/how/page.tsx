@@ -173,7 +173,7 @@ export default function HowPage() {
               <div className="hud hud-lg overflow-hidden p-6 sm:p-9">
                 <div className="dots pointer-events-none absolute right-6 top-6 h-14 w-28 opacity-50 [mask-image:linear-gradient(90deg,transparent,#000)]" aria-hidden />
                 <div
-                  className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-violet/25 blur-3xl"
+                  className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.3),transparent_68%)]"
                   aria-hidden
                 />
                 <p className="eyebrow relative">Mezo’s boost formula</p>

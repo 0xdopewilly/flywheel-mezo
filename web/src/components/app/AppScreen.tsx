@@ -3,11 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatUnits } from "viem";
-import { useAccount, useReadContract } from "wagmi";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccount, useBalance, useReadContract } from "wagmi";
+import { useChainModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/ui/api";
-import { useCachedQuery, useDebounced } from "@/lib/ui/hooks";
+import { useCachedQuery, useDebounced, useTwoPhasePlan } from "@/lib/ui/hooks";
 import { DEFAULT_UI_POLICY, DEMO_TOKEN_ID, type Position, type PositionPolicy, type UiPolicy } from "@/lib/ui/types";
 import { fmtEpoch } from "@/lib/ui/format";
 import { erc20Abi } from "@/lib/mezo/abis";
@@ -24,6 +24,7 @@ import { Positions } from "./Positions";
 import { PolicyPanel } from "./PolicyPanel";
 import { EnablePanel, type PilotStatus } from "./EnablePanel";
 import { RunPanel } from "./RunPanel";
+import { Mission } from "./Mission";
 import { MEZO_TESTNET_ID } from "./wagmi";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -90,16 +91,56 @@ export function AppScreen() {
   const musd = demo ? debounced.pullCap : Math.min(debounced.pullCap, musdBalance);
   const musdKey = Math.floor(musd * 100) / 100;
 
-  const planQ = useCachedQuery(["plan", tokenId, debounced, musdKey], () => api.plan(tokenId, debounced, musdKey), { staleTime: 60_000 });
+  const planQ = useTwoPhasePlan(
+    ["plan", tokenId, debounced, musdKey],
+    () => api.plan(tokenId, debounced, musdKey, true),
+    () => api.plan(tokenId, debounced, musdKey),
+    { staleTime: 60_000 },
+  );
 
   const [pilot, setPilot] = useState<PilotStatus | null>(null);
   const onStatus = useCallback((s: PilotStatus) => setPilot(s), []);
   useEffect(() => setPilot(null), [tokenId]);
 
   const refreshPositions = () => qc.invalidateQueries({ queryKey: ["positions", address] });
+
+  // one-click test veBTC from the mission panel (the same faucet as the card in "Your veBTC")
+  const [claim, setClaim] = useState<{ busy: boolean; msg?: string; ok?: boolean }>({ busy: false });
+  const doClaim = async () => {
+    if (!address || claim.busy) return;
+    setClaim({ busy: true });
+    try {
+      const r = await api.faucet(address);
+      setClaim({ busy: false, ok: true, msg: `veBTC #${r.tokenId} is in your wallet${Number(r.musd) > 0 ? `, with ${r.musd} MUSD and gas` : ""}.` });
+      setSelected(r.tokenId);
+      refreshPositions();
+      setTimeout(refreshPositions, 4000);
+    } catch (e) {
+      setClaim({ busy: false, ok: false, msg: (e as Error).message });
+    }
+  };
   const { openConnectModal } = useConnectModal();
+  const { openChainModal } = useChainModal();
   const wrongChain = isConnected && chainId !== MEZO_TESTNET_ID;
   const market = planQ.data?.market;
+
+  // the newcomer's mission: every step checked from live state
+  const gas = useBalance({ chainId: MEZO_TESTNET_ID, address, query: { enabled: !!address, refetchInterval: 30_000 } });
+  const journalQ = useCachedQuery(["journal", tokenId], () => api.journal(tokenId), { enabled: !demo, refetchInterval: 60_000, staleTime: 20_000 });
+  const enrolledNow = pilot?.enrolled ?? position?.enrolled ?? false;
+  const liveNow = pilot?.live ?? position?.live ?? false;
+  const mission = {
+    connected: isConnected,
+    wrongChain,
+    hasVeBTC: !!positions?.length,
+    loadingPositions: positionsQ.isFetching && !positions,
+    gasLow: gas.data !== undefined && gas.data.value < 10_000_000_000_000n,
+    enrolled: !demo && enrolledNow,
+    armed: !demo && enrolledNow && liveNow,
+    musdBudgetOk: pilot?.musdOk ?? true,
+    hasRun: !demo && (journalQ.data?.entries?.length ?? 0) > 0,
+    tokenId: demo ? undefined : tokenId,
+  };
 
   return (
     <>
@@ -143,6 +184,8 @@ export function AppScreen() {
           </div>
         </header>
 
+        <Mission s={mission} onConnect={() => openConnectModal?.()} onSwitchChain={() => openChainModal?.()} onClaim={doClaim} claim={claim} />
+
         <AnimatePresence>
           {wrongChain && (
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[3px] bg-blush px-5 py-4">
@@ -153,7 +196,7 @@ export function AppScreen() {
         </AnimatePresence>
 
         <div className="mt-8 grid gap-5 md:mt-12 lg:grid-cols-[400px_minmax(0,1fr)] lg:grid-rows-[auto_auto_1fr] lg:gap-6">
-          <div className="lg:col-start-1 lg:row-start-1">
+          <div id="positions" className="scroll-mt-24 lg:col-start-1 lg:row-start-1">
             {isConnected ? (
               <Positions
                 positions={positions}
@@ -175,7 +218,7 @@ export function AppScreen() {
             )}
           </div>
 
-          <div className="lg:col-start-1 lg:row-start-2">
+          <div id="limits" className="scroll-mt-24 lg:col-start-1 lg:row-start-2">
             <PolicyPanel policy={policy} onChange={setPolicy} demo={demo} dirty={!samePolicy(policy, saved)} onReset={() => setPolicy(saved)} />
           </div>
 
@@ -183,8 +226,9 @@ export function AppScreen() {
             <PlanCard
               tokenId={tokenId}
               data={planQ.data}
-              error={planQ.data ? undefined : planQ.error}
-              isFetching={planQ.isFetching && !!planQ.data}
+              error={planQ.error}
+              isFetching={planQ.refreshing}
+              narrating={planQ.narrating}
               onRetry={() => planQ.refetch()}
             />
             <GaugeTable plan={planQ.data?.plan} />
@@ -192,11 +236,18 @@ export function AppScreen() {
 
           {!demo && address && (
             <div className="flex flex-col gap-5 self-start lg:col-start-1 lg:row-start-3 lg:gap-6">
-              <EnablePanel tokenId={tokenId} owner={address} policy={policy} onStatus={onStatus} onEnrolled={refreshPositions} />
+              <div id="enable" className="scroll-mt-24">
+                <EnablePanel tokenId={tokenId} owner={address} policy={policy} onStatus={onStatus} onEnrolled={refreshPositions} />
+              </div>
               <AnimatePresence>
                 {(pilot?.enrolled || position?.enrolled) && (
-                  <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: EASE }}>
-                    <RunPanel tokenId={tokenId} live={pilot?.live ?? position?.live ?? false} onExited={refreshPositions} />
+                  <motion.div id="run" className="scroll-mt-24" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.6, ease: EASE }}>
+                    <RunPanel
+                      tokenId={tokenId}
+                      live={pilot?.live ?? position?.live ?? false}
+                      onExited={refreshPositions}
+                      unsaved={!!pilot && pilot.enrolled && !pilot.policyMatches}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -206,7 +257,7 @@ export function AppScreen() {
 
         <Journal tokenId={tokenId} />
       </main>
-      <ReplanPill fetching={planQ.isFetching && !!planQ.data} headline={planQ.data?.plan.narrative.headline} />
+      <ReplanPill fetching={planQ.refreshing} headline={planQ.data?.plan.narrative.headline} />
       <Footer />
     </>
   );

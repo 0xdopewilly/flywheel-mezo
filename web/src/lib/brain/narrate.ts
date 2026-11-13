@@ -12,8 +12,10 @@ Rules:
 - Say where the votes go and why (rewards per vote versus how crowded each gauge is).
 - Compare with simply following the crowd, using the baseline numbers and edgePct.
 - Boost reasons: "bid_half_value" means nobody is paying veMEZO voters this epoch, so Flywheel bids half
-  of what the extra boost is worth; "profitable" means the market price makes boosting pay; "not_worth_it",
-  "no_budget" and "at_max" mean no boost spend.
+  of what the extra boost is worth; "profitable" means the market price makes boosting pay; "market_idle"
+  means no veMEZO holders are voting for boosts at all, so a bid would go unclaimed and Flywheel keeps the
+  MUSD in savings; "not_worth_it", "no_budget" and "at_max" mean no boost spend. Boost incentives are paid
+  to the veMEZO holders who vote for the boost; they never come back to the owner.
 - Say what happens to boost and savings this epoch, and why. A boost bid only posts incentives; the boost
   rises only if veMEZO holders vote for them. So say "bids for boost" or "posts a boost bid", never
   "boost raised" or "boosts your power".
@@ -89,7 +91,9 @@ export function template(core: PlanCore): { headline: string; why: string } {
         : `It also posts ${money(core.boost.spendUsd)} of boost incentives to lift voting power from ${core.boost.from}x to ${core.boost.to}x.`
       : core.boost.reason === "not_worth_it"
         ? "Boost is skipped: the extra rewards would not cover the incentives this epoch."
-        : "No boost this epoch.";
+        : core.boost.reason === "market_idle"
+          ? "No veMEZO holders are voting for boosts this epoch, so a bid would go unclaimed; no boost is bought."
+          : "No boost this epoch.";
   return {
     headline: lead ? `${lead.pct}% to ${lead.label}, ${money(core.expectedUsd)} expected this epoch` : "Holding this epoch",
     why: lead

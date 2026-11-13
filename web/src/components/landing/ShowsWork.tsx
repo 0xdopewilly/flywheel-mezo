@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { api } from "@/lib/ui/api";
-import { useCachedQuery } from "@/lib/ui/hooks";
+import { useTwoPhasePlan } from "@/lib/ui/hooks";
 import { DEFAULT_UI_POLICY, DEMO_TOKEN_ID } from "@/lib/ui/types";
 import { PlanCard } from "@/components/plan/PlanCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
@@ -15,7 +15,11 @@ const POINTS = [
 ];
 
 export function ShowsWork() {
-  const q = useCachedQuery(["plan", DEMO_TOKEN_ID, "landing"], () => api.plan(DEMO_TOKEN_ID, DEFAULT_UI_POLICY, 0));
+  const q = useTwoPhasePlan(
+    ["plan", DEMO_TOKEN_ID, "landing"],
+    () => api.plan(DEMO_TOKEN_ID, DEFAULT_UI_POLICY, 0, true),
+    () => api.plan(DEMO_TOKEN_ID, DEFAULT_UI_POLICY, 0),
+  );
   return (
     <section id="plan" className="shell mt-28 scroll-mt-24 md:mt-40" aria-labelledby="work-title">
       <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
@@ -48,7 +52,7 @@ export function ShowsWork() {
           </Reveal>
         </div>
         <Reveal y={40}>
-          <PlanCard tokenId={DEMO_TOKEN_ID} data={q.data} error={q.data ? undefined : q.error} isFetching={q.isFetching && !!q.data} onRetry={() => q.refetch()} variant="landing" />
+          <PlanCard tokenId={DEMO_TOKEN_ID} data={q.data} error={q.error} isFetching={q.refreshing} narrating={q.narrating} onRetry={() => q.refetch()} variant="landing" />
         </Reveal>
       </div>
     </section>

@@ -181,13 +181,11 @@ export default function HowPage() {
                   <span className="block">
                     boost <span className={op}>=</span> min( 5, 1 <span className={op}>+</span> 4 <span className={op}>×</span>
                   </span>
-                  <span className="block sm:pl-[1.2em]">
-                    <span className="whitespace-nowrap">
-                      (<span className="text-gold">your {caps("veBTC")} share</span>)<sup className="text-[0.55em]">−1</sup>
-                    </span>{" "}
-                    <span className="whitespace-nowrap">
-                      <span className={op}>×</span> <span className="energy-text">{caps("veMEZO")} share</span> )
-                    </span>
+                  <span className="block whitespace-nowrap pl-[1em]">
+                    (<span className="text-gold">your {caps("veBTC")} share</span>)<sup className="text-[0.55em]">−1</sup>
+                  </span>
+                  <span className="block whitespace-nowrap pl-[1em]">
+                    <span className={op}>×</span> <span className="energy-text">{caps("veMEZO")} share</span> )
                   </span>
                 </p>
                 <div className="relative mt-7 grid gap-4 border-t border-line pt-6 text-[14px] leading-relaxed text-ink/65 sm:grid-cols-2">

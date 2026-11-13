@@ -2,6 +2,8 @@
 
 Length 1:59.8 · 2560×1440 at 60 fps · H.264. Voice: Andrew (edge-tts, en-US-AndrewMultilingualNeural, +6% to +12%). Music bed: Mixkit 738, ducked under the voice.
 
+Status: the narration below is final, and so are its timings. The site is being redesigned, so its footage will be captured again from the redesigned site. The shot list describes the site as it was before the redesign; the beats and timings stay, and its wording will be updated after the new capture.
+
 The footage is the live site (https://flywheel-mezo.vercel.app) and Mezo's testnet explorer, recorded in slow motion and retimed to 60 fps. Every number on screen comes from the live app, the chain or a real test run. The terminal card shows real output from `FOUNDRY_PROFILE=fork forge test -vv`, run on 2026-11-13.
 
 ## Narration

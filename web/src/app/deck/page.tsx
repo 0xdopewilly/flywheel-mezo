@@ -20,6 +20,11 @@ function Ve({ children }: { children: string }) {
   return <span className="normal-case">{children}</span>;
 }
 
+/** Same, for strings rendered inside uppercase type. */
+function caps(text: string) {
+  return text.split(/\b(ve[A-Z]+|sMUSD)\b/).map((part, i) => (i % 2 ? <Ve key={i}>{part}</Ve> : part));
+}
+
 /** The HUD frame drawn on every slide, in the 1600x900 PDF coordinate space. */
 function Frame() {
   const L = 28;
@@ -228,12 +233,13 @@ function Loop() {
       <circle cx={x1} cy={y1} r="2.4" fill="#FFFFFF" />
       {st.map((s, i) => {
         const [x, y] = pt(s.a);
-        const [lx, ly] = pt(s.a, 43);
+        const [lx, ly] = pt(s.a, s.a === 0 || s.a === 180 ? 37.5 : 43);
+        const anchor = s.a === 0 ? "start" : s.a === 180 ? "end" : "middle";
         return (
           <g key={s.t}>
             <rect x={x - 3.2} y={y - 3.2} width="6.4" height="6.4" transform={`rotate(45 ${x} ${y})`} fill="#0D0718" stroke={i === 0 ? "#F5B53D" : "#B69CFF"} strokeWidth="0.9" />
             <rect x={x - 1.2} y={y - 1.2} width="2.4" height="2.4" transform={`rotate(45 ${x} ${y})`} fill={i === 0 ? "#F5B53D" : "#B69CFF"} />
-            <text x={lx} y={ly + 1.5} textAnchor="middle" fontSize="4" fontWeight="700" fill="#F1ECFF" letterSpacing="0.5" style={display}>
+            <text x={lx} y={ly + 1.5} textAnchor={anchor} fontSize="4" fontWeight="700" fill="#F1ECFF" letterSpacing="0.5" style={display}>
               {s.t.toUpperCase()}
             </text>
           </g>
@@ -288,7 +294,7 @@ export default function DeckPage() {
           <a href="/Flywheel-deck.pdf" className="btn btn-ghost btn-sm">
             Download PDF
           </a>
-          <Link href="/app" className="btn btn-ink btn-sm">
+          <Link href="/app" className="btn btn-ink btn-sm hidden sm:inline-flex">
             Open the app
           </Link>
         </div>
@@ -355,7 +361,7 @@ export default function DeckPage() {
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">What Flywheel does</p>
-          <h2 className="s-title max-w-[60cqw]">
+          <h2 className="s-title">
             One loop, run for you, <span className="energy-text">every epoch.</span>
           </h2>
           <div className="mt-[2cqw] grid flex-1 grid-cols-[30cqw_1fr] items-center gap-[5cqw]">
@@ -411,16 +417,16 @@ export default function DeckPage() {
             </div>
 
             {/* the plan, rendered natively */}
-            <div className="s-tile lg self-center !p-[2.4cqw]" role="img" aria-label="Flywheel's plan for veBTC #1752: 60% to the Savings Vault, 40% to MUSD/BTC. Expected $15.97 against $7.62 for copying the crowd's split (+110%), on that epoch's live data. Written by claude-sonnet-5-5.">
+            <div className="s-tile lg self-center !px-[2.4cqw] !py-[2cqw]" role="img" aria-label="Flywheel's plan for veBTC #1752: 60% to the Savings Vault, 40% to MUSD/BTC. Expected $15.97 against $7.62 for copying the crowd's split (+110%), on that epoch's live data. Written by claude-sonnet-5-5.">
               <div className="flex items-center justify-between gap-[1cqw]">
                 <span className="s-chip">veBTC #1752</span>
                 <span className="s-label !text-violet-hi">The plan</span>
               </div>
-              <p className="mt-[1.6cqw] font-[family-name:var(--font-display)] text-[2.5cqw] font-bold uppercase leading-[1] tracking-[0.01em]">
+              <p className="mt-[1.4cqw] font-[family-name:var(--font-display)] text-[2.5cqw] font-bold uppercase leading-[1] tracking-[0.01em]">
                 60% to the Savings Vault, <span className="energy-text">40% to MUSD/BTC</span>
               </p>
-              <div className="s-sep mt-[1.8cqw]" />
-              <p className="s-label mt-[1.4cqw]">Where the votes go</p>
+              <div className="s-sep mt-[1.5cqw]" />
+              <p className="s-label mt-[1.2cqw]">Where the votes go</p>
               {[
                 ["MUSD Savings Vault", 60],
                 ["MUSD / BTC", 40],
@@ -433,8 +439,8 @@ export default function DeckPage() {
                   <div className="s-ticks mt-[0.5cqw]" style={{ "--fill": `${v}%` } as CSSProperties} />
                 </div>
               ))}
-              <div className="s-sep mt-[1.8cqw]" />
-              <div className="mt-[1.4cqw] grid grid-cols-[auto_1fr] items-end gap-[2cqw]">
+              <div className="s-sep mt-[1.5cqw]" />
+              <div className="mt-[1.2cqw] grid grid-cols-[auto_1fr] items-end gap-[2cqw]">
                 <div>
                   <p className="s-label">Expected</p>
                   <p className="s-num gold-text mt-[0.5cqw] !text-[4.4cqw]">$15.97</p>
@@ -442,7 +448,7 @@ export default function DeckPage() {
                 </div>
                 <div className="flex flex-col gap-[0.9cqw] pb-[0.2cqw]">
                   <div>
-                    <div className="flex justify-between font-[family-name:var(--font-display)] text-[1.1cqw] font-bold uppercase tracking-[0.08em]">
+                    <div className="flex justify-between font-[family-name:var(--font-display)] text-[1.05cqw] font-bold uppercase tracking-[0.06em]">
                       <span>Flywheel</span>
                       <span className="text-gold">$15.97</span>
                     </div>
@@ -451,7 +457,7 @@ export default function DeckPage() {
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between font-[family-name:var(--font-display)] text-[1.1cqw] font-bold uppercase tracking-[0.08em] text-muted">
+                    <div className="flex justify-between font-[family-name:var(--font-display)] text-[1.05cqw] font-bold uppercase tracking-[0.06em] text-muted">
                       <span>Copying the crowd&apos;s split</span>
                       <span>$7.62</span>
                     </div>
@@ -461,7 +467,7 @@ export default function DeckPage() {
                   </div>
                 </div>
               </div>
-              <div className="mt-[1.6cqw] flex items-center justify-between gap-[1cqw] border-t border-[rgb(167_139_250/0.14)] pt-[1.1cqw] text-[1cqw] text-muted">
+              <div className="mt-[1.4cqw] flex items-center justify-between gap-[1cqw] border-t border-[rgb(167_139_250/0.14)] pt-[1.1cqw] text-[1cqw] text-muted">
                 <span>On that epoch&apos;s live data</span>
                 <span className="font-[family-name:var(--font-display)] font-semibold uppercase tracking-[0.14em] text-violet-hi">
                   written by <span className="normal-case">claude-sonnet-5-5</span>
@@ -477,45 +483,37 @@ export default function DeckPage() {
       <section className="slide" aria-label="Non-custodial guardrails">
         <Frame />
         <div className="slide-in">
-          <div className="grid h-full grid-cols-[33cqw_1fr] gap-[4cqw]">
-            <div className="flex flex-col">
-              <p className="s-kicker">Non-custodial by construction</p>
-              <h2 className="s-title">
-                Your <Ve>veBTC</Ve> never <span className="energy-text">leaves your wallet.</span>
-              </h2>
-              <p className="s-lede !mt-[2cqw] !text-[1.45cqw]">
-                You approve the contract on the NFT and enroll with a policy. FlywheelPilot checks it on every keeper call:
-              </p>
-              <p className="s-body mt-auto !text-[1.25cqw]">
-                Boost incentives only go to your own boost gauge. sMUSD only goes to you. The fee is capped at 10% in code.
-              </p>
-            </div>
-            <div className="s-tile lg self-center !px-[2.4cqw] !py-[1.6cqw]">
-              <div className="flex items-center justify-between pb-[0.9cqw]">
-                <span className="s-label !text-violet-hi">FlywheelPilot policy</span>
-                <span className="s-label">checked onchain</span>
+          <p className="s-kicker">Non-custodial by construction</p>
+          <h2 className="s-title">
+            Your <Ve>veBTC</Ve> never <span className="energy-text">leaves your wallet.</span>
+          </h2>
+          <p className="s-lede !mt-[1.4cqw] !max-w-[88cqw] !text-[1.45cqw]">
+            You approve the contract on the NFT and enroll with a policy. FlywheelPilot checks it on every keeper call:
+          </p>
+          <div className="s-tile lg mt-[1.6cqw] !px-[2.4cqw] !py-[1.2cqw]">
+            {[
+              ["Most of your votes in any one pool", "vote reverts", "PoolShareTooHigh", ""],
+              ["Spread across at least N pools", "vote reverts", "TooFewPools", ""],
+              ["Pools you never want, or dead gauges", "vote reverts", "PoolNotAllowed", ""],
+              ["Weekly MUSD reinvest budget", "compound reverts", "OverEpochCap", ""],
+              ["Share of a compound that may buy boost", "compound reverts", "BoostShareTooHigh", ""],
+              ["You sold or moved the NFT", "every action reverts", "OwnerChanged", ""],
+              ["You want out", "", "exit()", " any time, or revoke the approval"],
+            ].map(([a, verb, code, rest], i) => (
+              <div key={a} className="s-row !grid-cols-[3cqw_36cqw_1fr] !py-[0.72cqw] !text-[1.3cqw] first:!border-t-0 last:!border-b-0">
+                <span className="s-idx !text-[1.05cqw]">{pad(i + 1)}</span>
+                <b>{a}</b>
+                <span>
+                  {verb && <>{verb} </>}
+                  <code className={rest ? "good" : "bad"}>{code}</code>
+                  {rest}
+                </span>
               </div>
-              {[
-                ["Most of your votes in any one pool", "vote reverts", "PoolShareTooHigh", ""],
-                ["Spread across at least N pools", "vote reverts", "TooFewPools", ""],
-                ["Pools you never want, or dead gauges", "vote reverts", "PoolNotAllowed", ""],
-                ["Weekly MUSD reinvest budget", "compound reverts", "OverEpochCap", ""],
-                ["Share of a compound that may buy boost", "compound reverts", "BoostShareTooHigh", ""],
-                ["You sold or moved the NFT", "every action reverts", "OwnerChanged", ""],
-                ["You want out", "", "exit()", " any time, or revoke the approval"],
-              ].map(([a, verb, code, rest], i) => (
-                <div key={a} className="s-row !grid-cols-[2.6cqw_1fr_1fr] !py-[1.05cqw] !text-[1.3cqw]">
-                  <span className="s-idx !text-[1.05cqw]">{pad(i + 1)}</span>
-                  <b>{a}</b>
-                  <span>
-                    {verb && <>{verb} </>}
-                    <code className={rest ? "good" : "bad"}>{code}</code>
-                    {rest}
-                  </span>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
+          <p className="s-body mt-[1.4cqw] !text-[1.25cqw]">
+            Boost incentives only go to your own boost gauge. sMUSD only goes to you. The fee is capped at 10% in code.
+          </p>
         </div>
         <Foot n={5} />
       </section>
@@ -528,21 +526,21 @@ export default function DeckPage() {
           <h2 className="s-title">
             Deployed, verified, <span className="energy-text">already piloting.</span>
           </h2>
-          <div className="s-grid-3 mt-[2.4cqw]">
-            <div className="s-tile">
-              <p className="s-num">2</p>
+          <div className="s-grid-3 mt-[2cqw]">
+            <div className="s-tile !py-[1.8cqw]">
+              <p className="s-num !text-[5cqw]">2</p>
               <p className="s-h mt-[0.9cqw] !text-[1.5cqw]">
                 demo <Ve>veBTC</Ve> piloted
               </p>
               <p className="s-body mt-[0.5cqw] !text-[1.2cqw]">Our own #1752 and #1753, owned by a wallet separate from the keeper, each under its own limits. No outside users yet.</p>
             </div>
-            <div className="s-tile">
-              <p className="s-num">2</p>
+            <div className="s-tile !py-[1.8cqw]">
+              <p className="s-num !text-[5cqw]">2</p>
               <p className="s-h mt-[0.9cqw] !text-[1.5cqw]">plans published onchain</p>
               <p className="s-body mt-[0.5cqw] !text-[1.2cqw]">Each vote carries its full plan and reasoning in a PlanPublished event, read back by the app.</p>
             </div>
-            <div className="s-tile gold">
-              <p className="s-num">
+            <div className="s-tile gold !py-[1.8cqw]">
+              <p className="s-num !text-[5cqw]">
                 <span className="gold-text">160</span>
                 <span className="s-unit">MUSD</span>
               </p>
@@ -558,13 +556,13 @@ export default function DeckPage() {
               </div>
             </div>
           </div>
-          <div className="mt-[2cqw] max-w-[88cqw]">
+          <div className="mt-[1.8cqw] max-w-[88cqw]">
             {[
               ["FlywheelPilot (verified)", `${PILOT.slice(0, 10)}…${PILOT.slice(-6)}`, `${EXPLORER}/address/${PILOT}`],
               ["#1752 vote: 60% Savings Vault / 40% MUSD-BTC", "0x36e5ae…08dd20", `${EXPLORER}/tx/0x36e5ae6efd02e43972df4309ff64a0ff6bcd17a5a23765deea5920c5c308dd20`],
               ["#1752 compound: 100 MUSD", "0x4fedc1…0372c6", `${EXPLORER}/tx/0x4fedc1b2588c783ca7db5eb5ae8b18afe2bbab0cc6264586b8f2d3c3d06372c6`],
             ].map(([a, b, href], i) => (
-              <div key={a} className="s-row !grid-cols-[2.6cqw_36cqw_1fr] !py-[0.75cqw]">
+              <div key={a} className="s-row !grid-cols-[3cqw_36cqw_1fr] !py-[0.6cqw]">
                 <span className="s-idx !text-[1.05cqw]">{pad(i + 1)}</span>
                 <b>{a}</b>
                 <a className="s-link s-code" href={href}>
@@ -573,7 +571,7 @@ export default function DeckPage() {
               </div>
             ))}
           </div>
-          <p className="s-body mt-[1.2cqw] !text-[1.25cqw]">
+          <p className="s-body mt-[1cqw] !text-[1.25cqw]">
             On that epoch&apos;s live data, #1752&apos;s plan expected <span className="font-semibold text-gold">$15.97</span> against $7.62 for copying the crowd&apos;s split{" "}
             <span className="font-semibold text-ok">(+110%)</span>.
           </p>
@@ -584,19 +582,29 @@ export default function DeckPage() {
       {/* 7. Mainnet fork */}
       <section className="slide glow" aria-label="Proven against Mezo mainnet">
         <Frame />
-        <Rings className="pointer-events-none absolute right-[5cqw] top-1/2 h-[36cqw] w-[36cqw] -translate-y-1/2 opacity-80" />
-        <div className="s-dots pointer-events-none absolute right-[9cqw] top-[12cqw] h-[6cqw] w-[12cqw] opacity-50" aria-hidden />
+        <div className="pointer-events-none absolute right-[5cqw] top-1/2 h-[32cqw] w-[32cqw] -translate-y-1/2" aria-hidden>
+          <Rings className="absolute inset-0 h-full w-full" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <p className="s-label !text-violet-hi">Mezo mainnet fork</p>
+            <p className="s-num mt-[0.8cqw] !text-[2.6cqw]">13,202,859</p>
+            <p className="s-label mt-[0.6cqw]">block</p>
+            <span className="s-chip mt-[1.4cqw]">
+              <Ve>veBTC</Ve> #5803
+            </span>
+          </div>
+        </div>
+        <div className="s-dots pointer-events-none absolute right-[6.5cqw] top-[9cqw] h-[5cqw] w-[9cqw] opacity-40" aria-hidden />
         <div className="slide-in justify-center">
           <p className="s-kicker">Proven against Mezo mainnet</p>
           <p className="s-num mt-[2cqw] !text-[11cqw] !leading-[0.85]">
             <span className="gold-text">21.0099</span>
             <span className="s-unit !text-[0.4em]">MUSD</span>
           </p>
-          <p className="s-lede !mt-[2.4cqw] !max-w-[62cqw]">
+          <p className="s-lede !mt-[2.4cqw] !max-w-[54cqw]">
             harvested by Flywheel for a real veBTC (#5803) on a fork of Mezo mainnet at block 13,202,859, one block before its owner claimed by hand. The exact amount Mezo owed lands in the owner&apos;s wallet. The contract keeps nothing.
           </p>
-          <div className="s-sep mt-[2cqw] max-w-[62cqw]" />
-          <p className="s-body mt-[1.6cqw] max-w-[62cqw]">
+          <div className="s-sep mt-[2cqw] max-w-[54cqw]" />
+          <p className="s-body mt-[1.6cqw] max-w-[54cqw]">
             The same fork pushes a capped 70/30 vote through the live mainnet PoolsVoter, and rejects the holder&apos;s real all-in vote under a 70% cap. 22 unit and fuzz tests, 3 testnet-fork and 2 mainnet-fork tests pass.
           </p>
         </div>
@@ -621,7 +629,7 @@ export default function DeckPage() {
               ["veMEZO", "total and per-gauge voting power priced into every boost decision"],
               ["Mezo Passport", "wallet connection in the app"],
             ].map(([a, b], i) => (
-              <div key={a} className="s-row !grid-cols-[3cqw_30cqw_1fr] !py-[1.1cqw] !text-[1.4cqw]">
+              <div key={a} className="s-row !grid-cols-[3cqw_24cqw_1fr] !py-[1.05cqw] !text-[1.34cqw]">
                 <span className="s-idx !text-[1.1cqw]">{pad(i + 1)}</span>
                 <b>{a}</b>
                 <span>{b}</span>
@@ -640,14 +648,14 @@ export default function DeckPage() {
           <h2 className="s-title !max-w-[82cqw]">
             Paid only when your money <span className="energy-text">goes back to work.</span>
           </h2>
-          <div className="s-grid-3 mt-[2.4cqw]">
+          <div className="s-grid-3 mt-[2.2cqw] !grid-cols-[1fr_1fr_1.45fr]">
             <div className="s-tile gold !py-[1.9cqw]">
-              <p className="s-num gold-text !text-[5cqw]">5%</p>
+              <p className="s-num gold-text !text-[4.6cqw]">5%</p>
               <p className="s-h mt-[0.8cqw] !text-[1.5cqw]">of compounded MUSD</p>
               <p className="s-body mt-[0.4cqw] !text-[1.2cqw]">Goes to the treasury and pays the keeper: gas, the model call, monitoring. Capped at 10% in code.</p>
             </div>
             <div className="s-tile !py-[1.9cqw]">
-              <p className="s-num !text-[5cqw]">$0</p>
+              <p className="s-num !text-[4.6cqw]">$0</p>
               <p className="s-h mt-[0.8cqw] !text-[1.5cqw]">to vote and harvest</p>
               <p className="s-body mt-[0.4cqw] !text-[1.2cqw]">A holder who only wants their votes cast well every week pays nothing.</p>
             </div>
@@ -662,27 +670,14 @@ export default function DeckPage() {
           </div>
           <div className="mt-[2cqw]">
             <p className="s-lede !mt-0 !max-w-[88cqw] !text-[1.4cqw]">
-              As it ran on testnet: #1752 compounded 100 MUSD. 5 MUSD went to the treasury, 22.8 MUSD became boost incentives on its own boost gauge, and
-              72.2 MUSD went into the Savings Vault as sMUSD for the owner.
+              As it ran on testnet: #1752 compounded 100 MUSD. <span className="text-ink/90">5 MUSD</span> went to the treasury,{" "}
+              <span className="text-violet-hi">22.8 MUSD</span> became boost incentives on its own boost gauge, and{" "}
+              <span className="text-gold">72.2 MUSD</span> went into the Savings Vault as sMUSD for the owner.
             </p>
             <div className="s-stack mt-[1.2cqw]" aria-hidden>
               <i className="s-fill-gold" style={{ flexBasis: "72.2%" }} />
               <i className="s-fill-violet" style={{ flexBasis: "22.8%" }} />
               <i className="s-fill-faint" style={{ flexBasis: "5%" }} />
-            </div>
-            <div className="mt-[0.8cqw] flex gap-[2.4cqw] font-[family-name:var(--font-display)] text-[1.05cqw] font-semibold uppercase tracking-[0.14em] text-muted">
-              <span>
-                <i className="s-sw s-fill-gold" />
-                Savings Vault · 72.2 MUSD
-              </span>
-              <span>
-                <i className="s-sw s-fill-violet" />
-                Boost · 22.8 MUSD
-              </span>
-              <span>
-                <i className="s-sw s-fill-faint" />
-                Treasury · 5 MUSD
-              </span>
             </div>
           </div>
         </div>
@@ -709,7 +704,7 @@ export default function DeckPage() {
                     <span className="s-idx">{pad(i + 1)}</span>
                     <span className="h-px flex-1 bg-[rgb(167_139_250/0.2)]" />
                   </div>
-                  <p className="s-h mt-[1.2cqw]">{t}</p>
+                  <p className="s-h mt-[1.2cqw]">{caps(t)}</p>
                   <p className="s-body mt-[0.6cqw] !text-[1.2cqw]">{d}</p>
                 </div>
               ))}

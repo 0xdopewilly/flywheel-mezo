@@ -1,6 +1,6 @@
 "use client";
 
-import type { UiPolicy } from "@/lib/ui/types";
+import { DEMO_TOKEN_ID, type UiPolicy } from "@/lib/ui/types";
 import { AmountField, SliderField, StepperField, ToggleField } from "./Controls";
 import { Shell } from "./EnablePanel";
 
@@ -31,7 +31,7 @@ export function PolicyPanel({
       }
     >
       <p className="pretty -mt-2 mb-5 text-[13.5px] leading-relaxed text-muted">
-        {demo ? "Move anything and the brain re-plans veBTC #1742 live. Nothing is signed in demo mode." : "Move anything and the brain re-plans live. The contract enforces what you save."}
+        {demo ? `Move anything and the brain re-plans veBTC #${DEMO_TOKEN_ID} live. Nothing is signed in demo mode.` : "Move anything and the brain re-plans live. The contract enforces what you save."}
       </p>
       <div className="divide-y divide-line">
         <SliderField

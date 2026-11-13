@@ -4,6 +4,7 @@
 
 - **Live app:** https://flywheel-mezo.vercel.app. Open `/app` with no wallet to watch it plan for veBTC #1755, a real position it pilots on testnet, or connect any wallet and get a test veBTC in one click.
 - **Contract (Mezo testnet, verified):** [`FlywheelPilot` 0x22cf…aab3](https://explorer.test.mezo.org/address/0x22cfe1B060Aa7E10Ae6D114346Cc4f6B8550aab3)
+- **New to veBTC?** https://flywheel-mezo.vercel.app/guide explains the weekly loop, every term, what Flywheel can't do, and troubleshooting.
 - **Pitch deck:** [docs/Flywheel-deck.pdf](docs/Flywheel-deck.pdf) · https://flywheel-mezo.vercel.app/deck
 - **Video script:** [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md)
 - **Track:** Mezo WaveHack Wave 2 · built on Mezo testnet (chain 31611), with fork tests against Mezo mainnet (chain 31612)
@@ -14,7 +15,7 @@
 
 You don't need test BTC or an existing veBTC.
 
-1. Open https://flywheel-mezo.vercel.app/app and connect any EVM wallet (Mezo Passport, MetaMask, Rabby…). The app switches it to Mezo testnet.
+1. Open https://flywheel-mezo.vercel.app/app and connect any EVM wallet (Mezo Passport, MetaMask, Rabby…). The **Mission** panel at the top walks you through every step from here, checking each one off from your wallet's live state, and says what you'll sign and what can't happen.
 2. No veBTC yet? Click **Get a test veBTC**. Flywheel's testnet faucet locks 0.0008 test BTC into a veBTC minted straight to your wallet (`veBTC.createLockFor`), and adds a little BTC for gas plus 15 MUSD.
 3. Set your limits, then **Let Flywheel vote this veBTC** (approve), **Save your limits on-chain** (enroll) and **Allow the reinvest budget** (MUSD allowance).
 4. Click **Run the brain now**. It votes inside your limits and publishes its plan onchain, then compounds your MUSD into boost incentives and the Savings Vault (the sMUSD lands in your wallet). The journal at the bottom of the page reads the plan back from the chain.
@@ -99,7 +100,13 @@ cd ../web && npx vitest run        # optimizer tests
 2. **Optimize** (`optimize.ts`): your share of gauge *i* is `v/(V_i+v)`, which has diminishing returns. The brain maximises Σ R_i·v_i/(V_i+v_i) under your per-pool cap and minimum pool count, using water-filling on the KKT conditions. It also computes three baselines: all-in on the top gauge, copying the crowd's split, and an even split. That gives every plan an honest benchmark.
 3. **Boost** (`boost.ts`): uses Mezo's boost formula, `min(5, 1 + 4·(veBTC_total/nft_unboosted)·(veMEZO_on_gauge/veMEZO_total))`, to price the veMEZO needed for a target boost. It bids only when the boost is worth more than it costs. When the boost market is empty, it bids half the value.
 4. **Narrate** (`narrate.ts`): `claude-sonnet-5-5` (via NEAR AI's OpenAI-compatible endpoint) explains the plan in plain English. A grounding guard rejects any narrative that quotes a number not in the plan, and falls back to a deterministic template.
-5. **Act** (`pilot.ts`): the keeper votes, harvests and compounds, then publishes the plan JSON and its keccak hash onchain. A Vercel cron runs a pass over every enrolled veBTC daily, and anyone can trigger a pass for an enrolled veBTC from the app.
+5. **Act** (`pilot.ts`): the keeper votes, harvests and compounds exactly what the published plan says, and publishes the plan JSON and its keccak hash onchain. A Vercel cron runs every enrolled veBTC daily at 20:00 UTC. It harvests and reinvests on every run, but casts the week's single vote late (from Tuesday evening), once the week's incentives are posted. A manual "Run the brain now" from the app votes immediately.
+
+**Guardrails in the brain, on top of the contract's:**
+- **Boost bids:** it never bids for boost when no veMEZO holder is voting for boosts, because an unclaimed incentive is a loss. With savings off it pulls only the MUSD the priced bid needs.
+- **Expired locks:** it doesn't reinvest for a veBTC with no voting power.
+- **Explained skips:** every skipped step says why: already voted, budget used, no allowance, no MUSD, and so on.
+- **Allowance:** the MUSD allowance covers 12 weeks of budget, and the contract still enforces the weekly cap. The app shows the weeks left and offers a top-up.
 
 ## Mezo integration
 

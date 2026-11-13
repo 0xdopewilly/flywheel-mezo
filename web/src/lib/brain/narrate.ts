@@ -14,7 +14,9 @@ Rules:
 - Boost reasons: "bid_half_value" means nobody is paying veMEZO voters this epoch, so Flywheel bids half
   of what the extra boost is worth; "profitable" means the market price makes boosting pay; "not_worth_it",
   "no_budget" and "at_max" mean no boost spend.
-- Say what happens to boost and savings this epoch, and why.
+- Say what happens to boost and savings this epoch, and why. A boost bid only posts incentives; the boost
+  rises only if veMEZO holders vote for them. So say "bids for boost" or "posts a boost bid", never
+  "boost raised" or "boosts your power".
 - headline: at most 12 words. why: at most 90 words.
 Reply with JSON only: {"headline": "...", "why": "..."}`;
 

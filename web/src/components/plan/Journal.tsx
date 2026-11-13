@@ -98,8 +98,9 @@ function Entry({ e, i }: { e: JournalEntry; i: number }) {
         <FlywheelMark size={26} className="text-ink" />
       </span>
       <div className="md:pt-5 md:text-right">
-        <p className="text-[15px] font-semibold tracking-[-0.01em]">Epoch from {fmtEpoch(e.epoch)}</p>
-        <p className="tnum mt-0.5 text-[13px] text-muted">{fmtDateTime(e.timestamp)}</p>
+        <p className="text-[13px] text-muted">Epoch from</p>
+        <p className="whitespace-nowrap text-[15px] font-semibold tracking-[-0.01em]">{fmtEpoch(e.epoch)}</p>
+        <p className="tnum mt-1 whitespace-nowrap text-[13px] text-muted">Voted {fmtDateTime(e.timestamp)}</p>
       </div>
       <article className="card p-5 sm:p-7 md:ml-6">
         <h3 className="balance text-[19px] font-semibold leading-snug tracking-[-0.02em] sm:text-[21px]">{p.headline ?? "Plan published"}</h3>

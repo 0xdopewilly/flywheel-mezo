@@ -15,7 +15,7 @@ const serif = Instrument_Serif({
 export const metadata: Metadata = {
   title: { default: "Flywheel · Your veBTC, on autopilot", template: "%s · Flywheel" },
   description:
-    "Flywheel votes, harvests and compounds your Mezo veBTC every epoch, within limits you set, and publishes its reasoning on-chain before it touches anything.",
+    "Flywheel votes, harvests and compounds your Mezo veBTC every epoch, within limits you set, and publishes its reasoning on-chain with every vote.",
   openGraph: {
     title: "Flywheel · Your veBTC, on autopilot",
     description: "An AI autopilot for Mezo veBTC that shows its work on-chain.",

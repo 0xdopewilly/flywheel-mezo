@@ -1,0 +1,235 @@
+/* Pitch deck: every slide is a 16:9 container, sized in container units, so it reads the same on a phone,
+   a laptop and in the 1600x900 PDF export. 1cqw = 16px at the PDF size. */
+
+@layer components {
+.deck {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  padding: 24px var(--gutter) 64px;
+}
+
+.deck-bar {
+  width: min(100%, 1600px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.slide {
+  position: relative;
+  width: min(100%, 1600px);
+  aspect-ratio: 16 / 9;
+  container-type: inline-size;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #fff;
+  color: var(--color-ink);
+  box-shadow: 0 30px 60px -40px rgb(23 23 23 / 0.35);
+}
+
+.slide-in {
+  position: absolute;
+  inset: 0;
+  padding: 5.5cqw 6cqw;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide.paper {
+  background: var(--color-paper);
+}
+.slide.ink {
+  background: var(--color-ink);
+  color: #fff;
+}
+
+.s-foot {
+  position: absolute;
+  left: 6cqw;
+  right: 6cqw;
+  bottom: 3.2cqw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.05cqw;
+  color: var(--color-muted);
+}
+.ink .s-foot {
+  color: rgb(255 255 255 / 0.5);
+}
+
+.s-kicker {
+  font-size: 1.35cqw;
+  font-weight: 600;
+  color: var(--color-red);
+  letter-spacing: -0.01em;
+}
+.ink .s-kicker {
+  color: #ff5c8d;
+}
+
+.s-title {
+  margin-top: 1.2cqw;
+  font-size: 4.6cqw;
+  font-weight: 560;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  text-wrap: balance;
+}
+.s-title.xl {
+  font-size: 7.4cqw;
+  line-height: 0.95;
+}
+
+.s-lede {
+  margin-top: 2cqw;
+  max-width: 58cqw;
+  font-size: 1.75cqw;
+  line-height: 1.45;
+  color: rgb(23 23 23 / 0.7);
+  text-wrap: pretty;
+}
+.ink .s-lede {
+  color: rgb(255 255 255 / 0.72);
+}
+
+.s-body {
+  font-size: 1.45cqw;
+  line-height: 1.45;
+  color: rgb(23 23 23 / 0.72);
+  text-wrap: pretty;
+}
+.ink .s-body {
+  color: rgb(255 255 255 / 0.7);
+}
+
+.s-h {
+  font-size: 1.9cqw;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.s-num {
+  font-size: 5.2cqw;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+}
+
+.s-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2cqw;
+}
+.s-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2cqw;
+}
+
+.s-tile {
+  border-radius: 1.8cqw;
+  padding: 2.2cqw 2.4cqw;
+  background: var(--color-paper);
+}
+.paper .s-tile {
+  background: #fff;
+}
+.ink .s-tile {
+  background: rgb(255 255 255 / 0.06);
+}
+.s-tile.sand {
+  background: var(--color-sand);
+}
+.s-tile.lime {
+  background: var(--color-lime);
+}
+.s-tile.blush {
+  background: var(--color-blush);
+}
+.s-tile.sky {
+  background: var(--color-sky-soft);
+}
+
+.s-row {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 2cqw;
+  align-items: baseline;
+  padding: 0.8cqw 0;
+  border-top: 1px solid rgb(23 23 23 / 0.08);
+  font-size: 1.3cqw;
+  line-height: 1.35;
+}
+.s-row.k {
+  grid-template-columns: 26cqw 1fr;
+}
+.s-row:last-child {
+  border-bottom: 1px solid rgb(23 23 23 / 0.08);
+}
+.s-row b {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.s-row code,
+.s-code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.92em;
+  color: var(--color-plum);
+}
+
+.s-shot {
+  border-radius: 1.6cqw;
+  overflow: hidden;
+  box-shadow: 0 2cqw 4cqw -2.6cqw rgb(23 23 23 / 0.45);
+  background: #fff;
+}
+.s-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.s-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgb(255 0 77 / 0.5);
+  text-underline-offset: 0.2em;
+}
+}
+
+@media print {
+  @page {
+    size: 1600px 900px;
+    margin: 0;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  .deck {
+    padding: 0;
+    gap: 0;
+  }
+  .deck-bar,
+  .no-print {
+    display: none !important;
+  }
+  .slide {
+    width: 1600px;
+    height: 900px;
+    border-radius: 0;
+    box-shadow: none;
+    break-after: page;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .slide:last-of-type {
+    break-after: auto;
+  }
+}

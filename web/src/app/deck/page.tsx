@@ -263,8 +263,8 @@ export default function DeckPage() {
           <div className="s-grid-3 mt-[2.2cqw]">
             <div className="s-tile">
               <p className="s-num">2</p>
-              <p className="s-h mt-[0.8cqw] !text-[1.5cqw]">veBTC piloted</p>
-              <p className="s-body mt-[0.4cqw] !text-[1.2cqw]">#1752 and #1753, owned by a wallet separate from the keeper, each under its own limits.</p>
+              <p className="s-h mt-[0.8cqw] !text-[1.5cqw]">demo veBTC piloted</p>
+              <p className="s-body mt-[0.4cqw] !text-[1.2cqw]">Our own #1752 and #1753, owned by a wallet separate from the keeper, each under its own limits. No outside users yet.</p>
             </div>
             <div className="s-tile">
               <p className="s-num">2</p>

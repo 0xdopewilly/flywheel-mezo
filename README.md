@@ -49,7 +49,7 @@ Fees are hard-capped at 10% in code (`MAX_FEE_BPS`) and set to 5%. They're taken
 
 ### On Mezo testnet (live now)
 
-The pilot is deployed and verified, and two veBTC are enrolled from an owner wallet that is separate from the keeper:
+The pilot is deployed and verified. To prove the mechanics end to end, we locked test BTC into two veBTC of our own (#1752 and #1753) and enrolled them from an owner wallet that is separate from the keeper wallet. These are demo positions, not outside users: Flywheel has no outside users yet.
 
 | What | Transaction |
 |---|---|

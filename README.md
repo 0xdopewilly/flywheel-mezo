@@ -18,7 +18,7 @@ You don't need test BTC or an existing veBTC.
 2. No veBTC yet? Click **Get a test veBTC**. Flywheel's testnet faucet locks 0.0008 test BTC into a veBTC minted straight to your wallet (`veBTC.createLockFor`), and adds a little BTC for gas plus 15 MUSD.
 3. Set your limits, then **Let Flywheel vote this veBTC** (approve), **Save your limits on-chain** (enroll) and **Allow the reinvest budget** (MUSD allowance).
 4. Click **Run the brain now**. It votes inside your limits and publishes its plan onchain, then compounds your MUSD into boost incentives and the Savings Vault (the sMUSD lands in your wallet). The journal at the bottom of the page reads the plan back from the chain.
-5. **Exit** whenever you like, or revoke the approval in your wallet.
+5. **Exit autopilot** whenever you like, or revoke the approval in your wallet.
 
 Mezo allows one vote per veBTC per epoch, so a second run in the same week skips the vote and only harvests and compounds.
 

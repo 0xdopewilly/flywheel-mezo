@@ -73,9 +73,9 @@ export function WaterFill() {
                 x={x + COL / 2}
                 y={H - 8}
                 textAnchor="middle"
-                fontSize="15"
+                fontSize="17"
                 fontWeight="700"
-                letterSpacing="2"
+                letterSpacing="2.2"
                 fill="#D9D0F2"
                 style={{ fontFamily: "var(--font-display)" }}
               >

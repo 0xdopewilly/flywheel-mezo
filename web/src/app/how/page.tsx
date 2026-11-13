@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 import { Nav, Arrow, ExternalArrow } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
@@ -33,38 +34,89 @@ const CONTRACTS: { name: string; what: string; addr: string }[] = [
   { name: "MUSD Savings Vault", what: "Where saved MUSD earns, as sMUSD", addr: MEZO.smusd },
 ];
 
+const SECTIONS = [
+  { id: "votes", t: "Rewards per vote" },
+  { id: "boost", t: "Boost" },
+  { id: "guards", t: "Contract limits" },
+  { id: "contracts", t: "Mezo contracts" },
+];
+
+/** Keeps Mezo's lowercase prefixes (veBTC, veMEZO, sMUSD) intact inside uppercase display type. */
+function caps(text: string): ReactNode {
+  return text.split(/\b(ve[A-Z]+|sMUSD)\b/).map((part, i) =>
+    i % 2 ? (
+      <span key={i} className="normal-case">
+        {part}
+      </span>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  );
+}
+
+function SectionTag({ n, label }: { n: number; label: string }) {
+  return (
+    <p className="flex items-center gap-3">
+      <span className="hud-num text-[15px] tracking-[0.18em] text-gold">0{n}</span>
+      <span className="hud-num text-[13px] tracking-[0.18em] text-faint">/ 0{SECTIONS.length}</span>
+      <span className="h-px w-10 bg-line-strong" aria-hidden />
+      <span className="eyebrow">{label}</span>
+    </p>
+  );
+}
+
+const op = "px-[0.15em] font-sans font-normal text-[0.85em] text-faint";
+
 export default function HowPage() {
   const contracts = PILOT_ADDRESS ? [{ name: "FlywheelPilot", what: "Flywheel’s contract: the guardrails above", addr: PILOT_ADDRESS }, ...CONTRACTS] : CONTRACTS;
   return (
     <>
       <Nav />
       <main className="shell">
-        <header className="pb-6 pt-10 md:pt-20">
+        <header className="grid gap-10 pb-6 pt-10 md:pt-20 lg:grid-cols-[1fr_340px] lg:items-end lg:gap-16">
           <Reveal>
-            <h1 className="display balance max-w-[900px] text-[clamp(46px,7vw,100px)]">
-              How the brain <span className="serif-accent energy-text">thinks.</span>
+            <p className="eyebrow">How it works</p>
+            <h1 className="display balance mt-4 max-w-[900px] text-[clamp(50px,8vw,112px)]">
+              How the brain <span className="energy-text">thinks.</span>
             </h1>
             <p className="pretty mt-7 max-w-[620px] text-[18px] leading-[1.6] text-ink/70">
               Each epoch Flywheel votes, harvests and reinvests. Here is the maths behind each decision in plain words, and the rules the contract
               holds it to.
             </p>
           </Reveal>
+          <Reveal delay={0.12} className="hidden lg:block">
+            <nav className="hud glass px-6 py-5" aria-label="On this page">
+              <ol className="divide-y divide-line">
+                {SECTIONS.map((s, i) => (
+                  <li key={s.id}>
+                    <a href={`#${s.id}`} className="group flex items-center gap-4 py-3 transition-colors">
+                      <span className="hud-num text-[13px] tracking-[0.18em] text-gold">0{i + 1}</span>
+                      <span className="flex-1 font-[family-name:var(--font-display)] text-[16px] font-semibold uppercase tracking-[0.1em] text-ink/80 transition-colors group-hover:text-ink">
+                        {s.t}
+                      </span>
+                      <span className="h-px w-5 bg-violet-hi/50 transition-all duration-300 group-hover:w-9 group-hover:bg-violet-hi" aria-hidden />
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          </Reveal>
         </header>
 
         {/* 1. votes */}
         <section className="mt-16 grid gap-10 md:mt-24 lg:grid-cols-[1fr_1.05fr] lg:gap-16" aria-labelledby="votes">
           <Reveal>
-            <p className="serif-accent text-[22px] text-red">One</p>
-            <h2 id="votes" className="display balance mt-2 text-[clamp(32px,4vw,52px)]">
-              Rewards per vote, <span className="serif-accent">minus the crowd.</span>
+            <SectionTag n={1} label="Votes" />
+            <h2 id="votes" className="display balance mt-5 scroll-mt-[150px] text-[clamp(36px,4.4vw,58px)]">
+              Rewards per vote, <span className="energy-text">minus the crowd.</span>
             </h2>
-            <div className="pretty mt-6 flex max-w-[540px] flex-col gap-4 text-[16.5px] leading-[1.65] text-ink/75">
+            <div className="pretty mt-6 flex max-w-[540px] flex-col gap-4 text-[16.5px] leading-[1.65] text-ink/70">
               <p>
                 Every Mezo Earn gauge has a pot for the epoch: the incentives people posted plus the trading fees. The pot is split between everyone
                 who voted for it, in proportion to their votes.
               </p>
               <p>
-                So the size of the pot is not what matters. What matters is how much the <em className="serif-accent text-[1.08em]">next</em> vote
+                So the size of the pot is not what matters. What matters is how much the <em className="font-semibold not-italic text-violet-hi">next</em> vote
                 earns once your own votes join the crowd, because each vote you add also dilutes the ones before it.
               </p>
               <p>
@@ -75,21 +127,19 @@ export default function HowPage() {
             </div>
           </Reveal>
           <Reveal y={40} className="self-center">
-            <div className="rounded-[32px] bg-blush p-5 sm:p-8">
-              <div className="mb-5 flex items-baseline justify-between gap-4">
-                <p className="text-[15px] font-semibold">Water-filling</p>
-                <p className="text-[13px] text-muted">illustration</p>
+            <div className="hud hud-lg p-5 sm:p-8">
+              <div className="mb-6 flex items-center justify-between gap-4">
+                <p className="eyebrow">Water-filling</p>
+                <p className="font-[family-name:var(--font-display)] text-[12px] font-semibold uppercase tracking-[0.16em] text-faint">illustration</p>
               </div>
               <WaterFill />
             </div>
-            <div className="mt-5 rounded-[24px] bg-white px-6 py-5">
-              <p className="text-[13px] text-muted">Your share of a gauge’s pot</p>
-              <p className="mt-2 text-[18px] leading-relaxed tracking-[-0.01em] sm:text-[21px]">
-                pot <span className="text-muted">×</span> <span className="serif-accent text-[1.15em]">your votes</span>{" "}
-                <span className="text-muted">÷</span>{" "}
+            <div className="hud mt-4 px-6 py-5 sm:px-7">
+              <p className="eyebrow !text-[12px]">Your share of a gauge’s pot</p>
+              <p className="display mt-3 text-[19px] !leading-[1.4] tracking-[0.03em] sm:text-[24px]">
+                pot <span className={op}>×</span> <span className="text-violet-hi">your votes</span> <span className={op}>÷</span>{" "}
                 <span className="whitespace-nowrap">
-                  ( <span className="serif-accent text-[1.15em]">everyone else’s</span> <span className="text-muted">+</span>{" "}
-                  <span className="serif-accent text-[1.15em]">yours</span> )
+                  ( <span className="text-ink-2">everyone else’s</span> <span className={op}>+</span> <span className="text-violet-hi">yours</span> )
                 </span>
               </p>
             </div>
@@ -100,11 +150,11 @@ export default function HowPage() {
         <section className="mt-28 md:mt-40" aria-labelledby="boost">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
             <Reveal>
-              <p className="serif-accent text-[22px] text-red">Two</p>
-              <h2 id="boost" className="display balance mt-2 text-[clamp(32px,4vw,52px)]">
-                Boost: buying votes <span className="serif-accent">that multiply yours.</span>
+              <SectionTag n={2} label="Boost" />
+              <h2 id="boost" className="display balance mt-5 scroll-mt-[150px] text-[clamp(36px,4.4vw,58px)]">
+                Boost: buying votes <span className="energy-text">that multiply yours.</span>
               </h2>
-              <div className="pretty mt-6 flex max-w-[540px] flex-col gap-4 text-[16.5px] leading-[1.65] text-ink/75">
+              <div className="pretty mt-6 flex max-w-[540px] flex-col gap-4 text-[16.5px] leading-[1.65] text-ink/70">
                 <p>
                   Every veBTC has its own boost gauge. veMEZO holders who vote on it raise that veBTC’s voting power, up to five times. A small veBTC
                   gets far more lift from each veMEZO vote than a big one.
@@ -120,28 +170,40 @@ export default function HowPage() {
               </div>
             </Reveal>
             <Reveal y={40} className="self-center">
-              <div className="rounded-[32px] bg-ink p-7 text-white sm:p-10">
-                <p className="text-[14px] text-white/60">Mezo’s boost formula</p>
-                <p className="mt-5 text-[22px] leading-[1.5] tracking-[-0.01em] sm:text-[28px]">
-                  boost <span className="text-white/50">=</span> min( 5, 1 <span className="text-white/50">+</span> 4{" "}
-                  <span className="text-white/50">×</span>{" "}
-                  <span className="whitespace-nowrap">
-                    (<span className="serif-accent text-[1.12em]">your veBTC share</span>)
-                    <sup className="text-[0.55em]">−1</sup>
-                  </span>{" "}
-                  <span className="text-white/50">×</span> <span className="serif-accent energy-text-dark text-[1.12em]">veMEZO share</span> )
+              <div className="hud hud-lg overflow-hidden p-6 sm:p-9">
+                <div className="dots pointer-events-none absolute right-6 top-6 h-14 w-28 opacity-50 [mask-image:linear-gradient(90deg,transparent,#000)]" aria-hidden />
+                <div
+                  className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-violet/25 blur-3xl"
+                  aria-hidden
+                />
+                <p className="eyebrow relative">Mezo’s boost formula</p>
+                <p className="display relative mt-6 text-[21px] !leading-[1.5] tracking-[0.03em] sm:text-[27px]">
+                  <span className="block">
+                    boost <span className={op}>=</span> min( 5, 1 <span className={op}>+</span> 4 <span className={op}>×</span>
+                  </span>
+                  <span className="block sm:pl-[1.2em]">
+                    <span className="whitespace-nowrap">
+                      (<span className="text-gold">your {caps("veBTC")} share</span>)<sup className="text-[0.55em]">−1</sup>
+                    </span>{" "}
+                    <span className="whitespace-nowrap">
+                      <span className={op}>×</span> <span className="energy-text">{caps("veMEZO")} share</span> )
+                    </span>
+                  </span>
                 </p>
-                <div className="mt-7 grid gap-4 border-t border-white/10 pt-6 text-[14px] leading-relaxed text-white/70 sm:grid-cols-2">
+                <div className="relative mt-7 grid gap-4 border-t border-line pt-6 text-[14px] leading-relaxed text-ink/65 sm:grid-cols-2">
                   <p>
-                    <span className="font-semibold text-white">Your veBTC share</span> is your veBTC’s voting power over all veBTC voting power.
+                    <span className="font-semibold text-gold">Your veBTC share</span> is your veBTC’s voting power over all veBTC voting power.
                   </p>
                   <p>
-                    <span className="font-semibold text-white">veMEZO share</span> is the veMEZO voting on your boost gauge over all veMEZO.
+                    <span className="font-semibold text-violet-hi">veMEZO share</span> is the veMEZO voting on your boost gauge over all veMEZO.
                   </p>
                 </div>
               </div>
-              <div className="mt-5 rounded-[24px] bg-white p-6">
-                <p className="mb-4 text-[13px] text-muted">Right now on Mezo testnet</p>
+              <div className="hud mt-4 p-5 sm:p-6">
+                <p className="mb-4 flex items-center gap-2.5">
+                  <span className="hud-pulse h-2 w-2 bg-ok shadow-[0_0_10px_rgba(62,224,161,0.8)]" aria-hidden />
+                  <span className="eyebrow !text-[12px] !text-ok">Right now on Mezo testnet</span>
+                </p>
                 <BoostLive />
               </div>
             </Reveal>
@@ -151,21 +213,30 @@ export default function HowPage() {
         {/* 3. guardrails */}
         <section className="mt-28 md:mt-40" aria-labelledby="guards">
           <Reveal className="max-w-[760px]">
-            <p className="serif-accent text-[22px] text-red">Three</p>
-            <h2 id="guards" className="display balance mt-2 text-[clamp(32px,4vw,52px)]">
-              Limits the contract <span className="serif-accent">enforces.</span>
+            <SectionTag n={3} label="Guardrails" />
+            <h2 id="guards" className="display balance mt-5 scroll-mt-[150px] text-[clamp(36px,4.4vw,58px)]">
+              Limits the contract <span className="energy-text">enforces.</span>
             </h2>
-            <p className="pretty mt-5 max-w-[580px] text-[16.5px] leading-[1.65] text-ink/75">
+            <p className="pretty mt-5 max-w-[580px] text-[16.5px] leading-[1.65] text-ink/70">
               The AI proposes. The FlywheelPilot contract checks every vote and every reinvestment against the limits you signed, and reverts anything
               outside them. Every vote also publishes the full plan, and every reinvestment carries its hash.
             </p>
           </Reveal>
           <Stagger className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" gap={0.05}>
             {GUARDS.map((g, i) => (
-              <StaggerItem key={g.t} className={`rounded-[24px] p-6 ${["bg-sand", "bg-lime", "bg-blush", "bg-sky-soft"][i % 4]}`}>
-                <p className="text-[16px] font-semibold leading-snug tracking-[-0.015em]">{g.t}</p>
-                <p className="pretty mt-2 text-[14px] leading-relaxed text-ink/70">{g.d}</p>
-                {g.e && <p className="mt-4 text-[12.5px] text-ink/50">reverts with {g.e}</p>}
+              <StaggerItem key={g.t} className="hud flex flex-col p-6">
+                <div className="flex items-center gap-3">
+                  <span className="hud-num text-[13px] tracking-[0.18em] text-gold">0{i + 1}</span>
+                  <span className="h-px flex-1 bg-line" aria-hidden />
+                  <span className={`h-1.5 w-1.5 ${g.e ? "bg-red" : "bg-ok"}`} aria-hidden />
+                </div>
+                <p className="display mt-4 text-[21px] !leading-[1.05] tracking-[0.02em]">{caps(g.t)}</p>
+                <p className="pretty mt-3 text-[14px] leading-relaxed text-ink/65">{g.d}</p>
+                {g.e && (
+                  <p className="mt-auto pt-5 text-[12.5px] text-faint">
+                    reverts with <code className="font-mono text-[12px] text-red">{g.e}</code>
+                  </p>
+                )}
               </StaggerItem>
             ))}
           </Stagger>
@@ -174,34 +245,39 @@ export default function HowPage() {
         {/* 4. contracts */}
         <section className="mt-28 md:mt-40" aria-labelledby="contracts">
           <Reveal className="max-w-[760px]">
-            <h2 id="contracts" className="display balance text-[clamp(30px,3.6vw,46px)]">
-              Mezo contracts it <span className="serif-accent">works with.</span>
+            <SectionTag n={4} label="Onchain" />
+            <h2 id="contracts" className="display balance mt-5 scroll-mt-[150px] text-[clamp(34px,4vw,52px)]">
+              Mezo contracts it <span className="energy-text">works with.</span>
             </h2>
             <p className="mt-4 text-[16px] text-ink/70">All on Mezo testnet. Each address opens in the Mezo explorer.</p>
           </Reveal>
           <Reveal className="card mt-10 overflow-hidden">
             <ul className="divide-y divide-line">
-              {contracts.map((c) => (
+              {contracts.map((c, i) => (
                 <li key={c.name}>
                   <a
                     href={addrUrl(c.addr)}
                     target="_blank"
                     rel="noreferrer"
-                    className="group grid gap-1 px-6 py-5 transition-colors hover:bg-paper/60 sm:grid-cols-[220px_1fr_auto] sm:items-center sm:gap-6 sm:px-8"
+                    className="group grid gap-1 px-6 py-5 transition-colors hover:bg-violet/[0.06] sm:grid-cols-[36px_200px_1fr_auto] sm:items-center sm:gap-6 sm:px-8"
                   >
-                    <span className="text-[15.5px] font-semibold tracking-[-0.01em]">{c.name}</span>
+                    <span className="hud-num hidden text-[13px] tracking-[0.14em] text-faint transition-colors group-hover:text-gold sm:block">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-[family-name:var(--font-display)] text-[18px] font-bold tracking-[0.03em]">{c.name}</span>
                     <span className="text-[14px] text-muted">{c.what}</span>
-                    <span className="tnum inline-flex items-center gap-1.5 text-[13.5px] font-medium text-ink/80 group-hover:text-ink">
+                    <span className="tnum inline-flex items-center gap-1.5 font-mono text-[13px] text-violet-hi/85 group-hover:text-violet-hi">
                       {c.addr.slice(0, 8)}…{c.addr.slice(-6)} <ExternalArrow />
                     </span>
                   </a>
                 </li>
               ))}
               {!PILOT_ADDRESS && (
-                <li className="grid gap-1 px-6 py-5 sm:grid-cols-[220px_1fr_auto] sm:items-center sm:gap-6 sm:px-8">
-                  <span className="text-[15.5px] font-semibold tracking-[-0.01em]">FlywheelPilot</span>
+                <li className="grid gap-1 px-6 py-5 sm:grid-cols-[36px_200px_1fr_auto] sm:items-center sm:gap-6 sm:px-8">
+                  <span className="hud-num hidden text-[13px] tracking-[0.14em] text-faint sm:block">{String(contracts.length + 1).padStart(2, "0")}</span>
+                  <span className="font-[family-name:var(--font-display)] text-[18px] font-bold tracking-[0.03em]">FlywheelPilot</span>
                   <span className="text-[14px] text-muted">Flywheel’s contract: the guardrails above</span>
-                  <span className="text-[13.5px] text-muted">deploying to testnet</span>
+                  <span className="font-[family-name:var(--font-display)] text-[13px] font-semibold uppercase tracking-[0.14em] text-gold">deploying to testnet</span>
                 </li>
               )}
             </ul>

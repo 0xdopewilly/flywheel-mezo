@@ -21,12 +21,12 @@ export function ConnectPill({ size = "sm" }: { size?: "sm" | "lg" }) {
   return (
     <ConnectButton.Custom>
       {({ account, chain, openConnectModal, openAccountModal, openChainModal, mounted }) => {
-        const cls = size === "sm" ? "btn btn-sm ml-1" : "btn";
+        const cls = size === "sm" ? "btn btn-sm ml-1 max-[400px]:px-3 max-[400px]:tracking-[0.06em]" : "btn";
         if (!mounted) return <span className={`${cls} btn-ink opacity-0`}>Connect wallet</span>;
         if (!account || !chain)
           return (
             <button type="button" onClick={openConnectModal} className={`${cls} btn-ink`}>
-              Connect wallet
+              Connect<span className="max-[400px]:hidden"> wallet</span>
             </button>
           );
         if (chain.unsupported)

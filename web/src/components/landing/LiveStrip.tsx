@@ -153,7 +153,7 @@ function GaugeCard({ g, perVote, share, i }: { g: GaugeSnapshot; perVote: number
       <p className="hud-num mt-3 text-[34px] leading-none text-ink">
         {Number.isFinite(perVote) ? <CountUp value={perVote} format={fmtUsd} /> : <span className="text-[22px]">Unvoted</span>}
       </p>
-      <p className="mt-1 text-[12px] uppercase tracking-[0.12em] text-violet-hi">{Number.isFinite(perVote) ? "per veBTC vote" : "nobody votes here yet"}</p>
+      <p className="mt-1 text-[12px] uppercase tracking-[0.12em] text-violet-hi">{Number.isFinite(perVote) ? <>per <span className="normal-case">ve</span>BTC vote</> : "nobody votes here yet"}</p>
       <div className="mt-auto pt-5">
         <div className="ticks !h-[10px]" style={{ ["--fill" as string]: `${Math.max(2, share * 100)}%` }} />
         <p className="tnum mt-2 text-[12px] text-muted">

@@ -212,7 +212,18 @@ export function Shell({ title, badge, children, right }: { title: string; badge?
     <section className="card p-5 sm:p-7">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <h2 className="font-[family-name:var(--font-display)] text-[20px] font-bold uppercase tracking-[0.08em]">{title}</h2>
+          <h2 className="font-[family-name:var(--font-display)] text-[20px] font-bold uppercase tracking-[0.08em]">
+            {title.split("veBTC").map((part, k, all) => (
+              <span key={k}>
+                {part}
+                {k < all.length - 1 && (
+                  <>
+                    <span className="normal-case">ve</span>BTC
+                  </>
+                )}
+              </span>
+            ))}
+          </h2>
           {badge && (
             <span
               className={`flex items-center gap-1.5 border px-2.5 py-0.5 text-[11.5px] font-semibold uppercase tracking-[0.14em] ${

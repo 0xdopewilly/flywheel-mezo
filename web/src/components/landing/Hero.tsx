@@ -47,7 +47,7 @@ export function Hero() {
 
         <div className="relative z-10 flex flex-col items-center px-5 pb-7 pt-9 text-center sm:px-10 md:pt-14">
           <motion.p className="eyebrow" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}>
-            Mezo Earn · veBTC autopilot
+            Mezo Earn · <span className="normal-case">ve</span>BTC autopilot
           </motion.p>
           <motion.h1
             id="hero-title"

@@ -122,7 +122,7 @@ export function AppScreen() {
                   </>
                 ) : (
                   <>
-                    Your veBTC, <span className="serif-accent energy-text">at work.</span>
+                    Your <span className="normal-case">ve</span>BTC, <span className="serif-accent energy-text">at work.</span>
                   </>
                 )}
               </motion.h1>

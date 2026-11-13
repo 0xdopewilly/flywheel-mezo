@@ -23,7 +23,8 @@ export function Journal({ tokenId }: { tokenId: string }) {
     <section className="mt-20 md:mt-28" aria-labelledby="journal-title">
       <Reveal className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 id="journal-title" className="display balance text-[clamp(34px,4.4vw,56px)]">
+          <p className="eyebrow">Onchain journal</p>
+          <h2 id="journal-title" className="display balance mt-2 text-[clamp(34px,4.4vw,56px)]">
             The brain’s journal, <span className="serif-accent energy-text">written on-chain.</span>
           </h2>
           <p className="pretty mt-4 max-w-[560px] text-[16px] leading-relaxed text-ink/70">
@@ -103,14 +104,14 @@ function Entry({ e, i }: { e: JournalEntry; i: number }) {
         <p className="tnum mt-1 whitespace-nowrap text-[13px] text-muted">Voted {fmtDateTime(e.timestamp)}</p>
       </div>
       <article className="card p-5 sm:p-7 md:ml-6">
-        <h3 className="balance text-[19px] font-semibold leading-snug tracking-[-0.02em] sm:text-[21px]">{p.headline ?? "Plan published"}</h3>
+        <h3 className="display balance text-[22px] leading-[1.05] sm:text-[26px]">{p.headline ?? "Plan published"}</h3>
         {p.why && (
           <div className="relative mt-3">
             <p ref={whyRef} className={`pretty text-[15px] leading-[1.6] text-ink/70 ${open ? "" : "line-clamp-3"}`}>
               {p.why}
             </p>
             {(clamped || open) && (
-              <button type="button" onClick={() => setOpen((o) => !o)} className="link-underline mt-1 text-[13.5px] font-semibold">
+              <button type="button" onClick={() => setOpen((o) => !o)} className="link-underline mt-1 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold">
                 {open ? "Show less" : "Read the full reasoning"}
               </button>
             )}

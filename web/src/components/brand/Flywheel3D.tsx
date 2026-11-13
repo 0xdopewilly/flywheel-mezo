@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 export function Flywheel3D({ className = "", onReady }: { className?: string; onReady?: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const el = host.current;
@@ -260,6 +261,7 @@ export function Flywheel3D({ className = "", onReady }: { className?: string; on
         composer.render();
         if (first) {
           first = false;
+          setReady(true);
           onReady?.();
         }
       };
@@ -294,7 +296,7 @@ export function Flywheel3D({ className = "", onReady }: { className?: string; on
 
   return (
     <div ref={host} className={`relative ${className}`} aria-hidden>
-      {failed && <StaticWheel />}
+      {(failed || !ready) && <StaticWheel />}
     </div>
   );
 }

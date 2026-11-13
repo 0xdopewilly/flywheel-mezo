@@ -71,7 +71,7 @@ export function Positions({
                   aria-checked={on}
                   onClick={() => onSelect(p.tokenId)}
                   className={`focus-ring w-full rounded-[3px] p-4 text-left transition-[background-color,box-shadow] duration-300 ${
-                    on ? "bg-white shadow-[inset_0_0_0_2px_#F1ECFF]" : "bg-paper hover:bg-paper-deep"
+                    on ? "bg-violet/15 shadow-[inset_0_0_0_1px_#B69CFF,0_0_24px_-6px_rgba(139,92,246,0.7)]" : "bg-paper hover:bg-paper-deep"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">

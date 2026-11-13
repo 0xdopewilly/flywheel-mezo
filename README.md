@@ -2,7 +2,7 @@
 
 **Your veBTC, on autopilot.** Flywheel is a non-custodial autopilot for Mezo veBTC. Every epoch it votes your veBTC across Mezo Earn gauges, claims what you earned, and puts your MUSD back to work as boost incentives or in the MUSD Savings Vault. It only acts inside limits you set onchain, and it publishes its reasoning onchain with every vote.
 
-- **Live app:** https://flywheel-mezo.vercel.app. Open `/app` with no wallet to watch it plan for a real veBTC it pilots on testnet.
+- **Live app:** https://flywheel-mezo.vercel.app. Open `/app` with no wallet to watch it plan for veBTC #1755, a real position it pilots on testnet, or connect any wallet and get a test veBTC in one click.
 - **Contract (Mezo testnet, verified):** [`FlywheelPilot` 0x22cf…aab3](https://explorer.test.mezo.org/address/0x22cfe1B060Aa7E10Ae6D114346Cc4f6B8550aab3)
 - **Pitch deck:** [docs/Flywheel-deck.pdf](docs/Flywheel-deck.pdf) · https://flywheel-mezo.vercel.app/deck
 - **Video script:** [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md)
@@ -70,6 +70,8 @@ The pilot is deployed and verified. To prove the mechanics end to end, we locked
 | veBTC #1752: compound 100 MUSD → 5 fee, 22.8 boost incentives (new boost gauge `0x1d50…af58`), 72.2 into savings | [0x4fed…72c6](https://explorer.test.mezo.org/tx/0x4fedc1b2588c783ca7db5eb5ae8b18afe2bbab0cc6264586b8f2d3c3d06372c6) |
 | veBTC #1753: vote under a 50% cap and 3-pool minimum, plan published | [0x7dc8…3c9e](https://explorer.test.mezo.org/tx/0x7dc831985ed0996a051f0d38dbea84b8bf9072e371723b77dfc85e0886a43c9e) |
 | veBTC #1753: compound 60 MUSD → 3 fee, 8.55 boost incentives (gauge `0x52d0…6419`), 48.45 into savings | [0x3bbb…8c88](https://explorer.test.mezo.org/tx/0x3bbbd36fe901b17b4fc9cfb4576d17c33070ed080b1d583cede796af46800c88) |
+| Visitor path: the app's faucet mints veBTC #1755 to a brand-new wallet (`createLockFor`), which approves, enrolls and gets voted 60/40 with the plan published | [0x4390…5d68](https://explorer.test.mezo.org/tx/0x4390f9135a8064d222f5fb2e81e60a32f272b65cf35636051accb951a80a5d68) |
+| veBTC #1755: compound its 15 faucet MUSD into boost incentives + savings | [0x6c9c…12b7](https://explorer.test.mezo.org/tx/0x6c9c7583153c4dfbaa6f8adeb3f83afd7ee46b0b58ec1f9eaa5fefe97e3412b7) |
 
 The owner wallet now holds 120.65 sMUSD. On that epoch's live data, #1752's plan expected $15.97 against $7.62 for copying the crowd's split (+110%). The plan, its numbers and that comparison are all inside the onchain plan JSON. The app's journal reads them back from `PlanPublished` logs, not from a database.
 

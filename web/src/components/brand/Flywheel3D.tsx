@@ -29,7 +29,7 @@ export function Flywheel3D({ className = "" }: { className?: string }) {
 
       let renderer: InstanceType<typeof THREE.WebGLRenderer>;
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
       } catch {
         setFailed(true);
         return;
@@ -39,9 +39,12 @@ export function Flywheel3D({ className = "" }: { className?: string }) {
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 0.95;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.setClearColor(0x000000, 0);
+      // opaque canvas in the panel's colour, edges faded with a mask: no premultiplied-alpha seams
+      renderer.setClearColor(0x140b24, 1);
       const canvas = renderer.domElement;
-      canvas.style.cssText = "width:100%;height:100%;display:block;opacity:0;transition:opacity .6s ease";
+      canvas.style.cssText =
+        "width:100%;height:100%;display:block;opacity:0;transition:opacity .6s ease;" +
+        "-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%);mask-image:radial-gradient(circle at 50% 50%,#000 52%,transparent 71%)";
       el.appendChild(canvas);
 
       const scene = new THREE.Scene();

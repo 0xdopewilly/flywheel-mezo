@@ -54,7 +54,7 @@ export function RunPanel({ tokenId, live, onExited }: { tokenId: string; live: b
       <button type="button" className="btn btn-ink mt-5 w-full sm:w-auto" disabled={!live || run.isPending} onClick={() => run.mutate()}>
         {run.isPending ? (
           <>
-            <FlywheelMark size={20} spinning className="text-white" /> The brain is working…
+            <FlywheelMark size={20} spinning className="text-[#fff]" /> The brain is working…
           </>
         ) : (
           "Run the brain now"
@@ -99,7 +99,7 @@ function ActionRow({ a }: { a: RunAction }) {
   return (
     <motion.li
       variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } } }}
-      className="flex items-start gap-3 rounded-2xl bg-paper p-3.5"
+      className="flex items-start gap-3 rounded-[3px] bg-paper p-3.5"
     >
       <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${a.kind === "skip" ? "bg-ink/10 text-ink/60" : "bg-ink text-white"}`}>
         {Icon ? <Icon size={16} /> : <span className="h-[2px] w-3 rounded bg-current" />}
@@ -127,7 +127,7 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-ink/35 p-4 backdrop-blur-[2px] sm:items-center"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 backdrop-blur-[3px] sm:items-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -137,7 +137,7 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
             role="dialog"
             aria-modal="true"
             aria-labelledby="exit-title"
-            className="w-full max-w-[440px] rounded-[28px] bg-white p-6 shadow-[0_40px_80px_-30px_rgba(23,23,23,0.5)] sm:p-7"
+            className="w-full max-w-[440px] rounded-[3px] bg-white p-6 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.5)] sm:p-7"
             initial={{ y: 40, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 24, opacity: 0, scale: 0.98 }}
@@ -170,7 +170,7 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
               </button>
               <button
                 type="button"
-                className="btn bg-red text-white hover:bg-[#e60045]"
+                className="btn bg-red text-[#fff] hover:brightness-110"
                 disabled={busy || !PILOT_ADDRESS}
                 onClick={async () => {
                   const ok = await tx.run(() =>
@@ -182,7 +182,7 @@ function ExitDialog({ open, tokenId, onClose, onExited }: { open: boolean; token
                   }
                 }}
               >
-                {busy ? <FlywheelMark size={20} spinning className="text-white" /> : null}
+                {busy ? <FlywheelMark size={20} spinning className="text-[#fff]" /> : null}
                 Exit autopilot
               </button>
             </div>

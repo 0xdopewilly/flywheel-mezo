@@ -11,7 +11,7 @@ import { Arrow } from "@/components/site/Nav";
 const POINTS = [
   { t: "It shows the numbers", d: "Rewards per vote, how crowded each gauge is, and what simpler strategies would earn." },
   { t: "It explains in plain words", d: "Claude writes the why from the plan’s own numbers. A guard rejects any figure the plan doesn’t contain." },
-  { t: "It publishes before it acts", d: "The full plan goes on-chain with the vote, so anyone can check that what ran is what it said." },
+  { t: "It publishes with the vote", d: "The full plan goes on-chain with the vote, so anyone can check that what ran is what it said." },
 ];
 
 export function ShowsWork() {
@@ -21,10 +21,11 @@ export function ShowsWork() {
       <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <Reveal>
-            <h2 id="work-title" className="display balance text-[clamp(38px,5vw,64px)]">
-              It shows its work, <span className="serif-accent energy-text">on-chain.</span>
+            <p className="eyebrow">The brain</p>
+            <h2 id="work-title" className="display balance mt-2 text-[clamp(36px,4.8vw,62px)]">
+              It shows its work, <span className="energy-text">onchain.</span>
             </h2>
-            <p className="pretty mt-6 max-w-[460px] text-[17px] leading-[1.6] text-ink/70">
+            <p className="pretty mt-6 max-w-[460px] text-[16px] leading-[1.65] text-muted">
               This is the brain’s live plan for veBTC #{DEMO_TOKEN_ID}, a real position Flywheel pilots on Mezo testnet, computed from this
               epoch’s gauges. Every vote it casts carries a plan like this one, published in the same transaction.
             </p>
@@ -32,17 +33,17 @@ export function ShowsWork() {
           <Stagger className="mt-10 flex flex-col gap-6" gap={0.1}>
             {POINTS.map((p, i) => (
               <StaggerItem key={p.t} className="flex gap-4">
-                <span className="serif-accent mt-[-2px] w-5 shrink-0 text-[24px] leading-none text-red">{i + 1}</span>
+                <span className="hud-num mt-[1px] w-7 shrink-0 text-[15px] tracking-[0.12em] text-gold">0{i + 1}</span>
                 <div>
-                  <p className="text-[16px] font-semibold tracking-[-0.01em]">{p.t}</p>
+                  <p className="font-[family-name:var(--font-display)] text-[19px] font-bold uppercase tracking-[0.05em]">{p.t}</p>
                   <p className="mt-1 max-w-[420px] text-[15px] leading-relaxed text-muted">{p.d}</p>
                 </div>
               </StaggerItem>
             ))}
           </Stagger>
           <Reveal delay={0.2}>
-            <Link href="/app" className="link-underline mt-10 inline-flex items-center gap-2 text-[15px] font-semibold">
-              Change the limits and watch it re-plan <Arrow />
+            <Link href="/app" className="btn btn-ghost mt-10">
+              Change the limits, watch it re-plan <Arrow />
             </Link>
           </Reveal>
         </div>

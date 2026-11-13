@@ -15,10 +15,10 @@ export function ErrorState({
   return (
     <div className={`flex flex-col items-start gap-4 sm:flex-row sm:items-center ${className}`} role="alert">
       <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden className="shrink-0">
-        <circle cx="22" cy="22" r="16" stroke="#171717" strokeOpacity="0.14" strokeWidth="4" />
-        <path d="M22 6a16 16 0 0 1 13.86 8" stroke="#FF004D" strokeWidth="4" strokeLinecap="round" />
-        <path d="M22 15.5v8" stroke="#171717" strokeWidth="2.2" strokeLinecap="round" />
-        <circle cx="22" cy="28.5" r="1.4" fill="#171717" />
+        <circle cx="22" cy="22" r="16" stroke="#F1ECFF" strokeOpacity="0.14" strokeWidth="4" />
+        <path d="M22 6a16 16 0 0 1 13.86 8" stroke="#B69CFF" strokeWidth="4" strokeLinecap="round" />
+        <path d="M22 15.5v8" stroke="#F1ECFF" strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx="22" cy="28.5" r="1.4" fill="#F1ECFF" />
       </svg>
       <div className="min-w-0 flex-1">
         <p className="text-[15px] font-semibold tracking-[-0.01em]">{title}</p>

@@ -1,38 +1,50 @@
 @import "tailwindcss";
 
+/*
+ * Flywheel HUD theme. Dark violet space, angular frames, Bitcoin gold for value.
+ * Token names are semantic carry-overs: "paper" is the page, "white" is a panel, "ink" is the main text colour.
+ */
 @theme {
-  --color-paper: #f4f0ed;
-  --color-paper-deep: #ece6e1;
-  --color-ink: #171717;
-  --color-ink-2: #2b2b2b;
-  --color-muted: #626262;
-  --color-faint: #9a9692;
-  --color-line: rgb(23 23 23 / 0.08);
-  --color-line-strong: rgb(23 23 23 / 0.14);
-  --color-red: #ff004d;
-  --color-plum: #6b0036;
-  --color-sand: #f8ecd4;
-  --color-lime: #eff3db;
-  --color-blush: #fae2df;
-  --color-sky: #aedfff;
-  --color-sky-soft: #dcf0ff;
-  --color-ok: #0f7b4b;
+  --color-paper: #07040d;
+  --color-paper-deep: #0c0716;
+  --color-white: #120a1f;
+  --color-ink: #f1ecff;
+  --color-ink-2: #d9d0f2;
+  --color-muted: #9b90b8;
+  --color-faint: #6c6288;
+  --color-line: rgb(167 139 250 / 0.13);
+  --color-line-strong: rgb(167 139 250 / 0.3);
+  --color-red: #ff4d8d;
+  --color-plum: #6d28d9;
+  --color-violet: #8b5cf6;
+  --color-violet-hi: #b69cff;
+  --color-violet-deep: #2a1250;
+  --color-gold: #f5b53d;
+  --color-gold-hi: #ffd27a;
+  --color-sand: #1d1408;
+  --color-lime: #0f1a12;
+  --color-blush: #22091a;
+  --color-sky: #a78bfa;
+  --color-sky-soft: #160d2a;
+  --color-ok: #3ee0a1;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  --radius-card: 28px;
-  --radius-panel: 40px;
+  --radius-card: 4px;
+  --radius-panel: 6px;
 }
 
 @theme inline {
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-rajdhani), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-rajdhani), ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
   --gutter: 20px;
+  --cut: 14px;
 }
 
 @media (min-width: 768px) {
@@ -42,7 +54,12 @@
 }
 
 html {
-  background: var(--color-paper);
+  background:
+    radial-gradient(1200px 700px at 50% -10%, rgb(124 58 237 / 0.22), transparent 60%),
+    radial-gradient(900px 600px at 100% 40%, rgb(192 38 211 / 0.08), transparent 60%),
+    radial-gradient(900px 700px at 0% 85%, rgb(91 33 182 / 0.12), transparent 60%),
+    var(--color-paper);
+  background-attachment: fixed;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
 }
@@ -54,59 +71,89 @@ html {
 }
 
 body {
-  background: var(--color-paper);
+  background: transparent;
   color: var(--color-ink);
   font-family: var(--font-sans);
-  font-feature-settings: "ss01" on;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
+/* faint HUD grid over everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgb(167 139 250 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(167 139 250 / 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 80%);
+}
+
 ::selection {
-  background: rgb(255 0 77 / 0.16);
-  color: var(--color-ink);
+  background: rgb(139 92 246 / 0.4);
+  color: #fff;
 }
 
 @layer components {
-/* ---------- type helpers ---------- */
+/* ---------- type ---------- */
 
 .tnum {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" on, "lnum" on;
 }
 
+/* headlines: condensed, uppercase, heavy */
 .display {
-  font-weight: 560;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 0.95;
 }
 
+/* the old italic accent is now a plain emphasis in the display face */
 .serif-accent {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
-.energy-text {
-  background: linear-gradient(100deg, var(--color-red) 10%, #c3003f 55%, var(--color-plum) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  /* italic overhang: keep the last glyph inside the clip box */
-  padding-right: 0.08em;
-  margin-right: -0.04em;
-}
-
+.energy-text,
 .energy-text-dark {
-  background: linear-gradient(100deg, #ff5c8d 0%, var(--color-red) 70%);
+  background: linear-gradient(95deg, #d6c6ff 0%, var(--color-violet-hi) 35%, var(--color-violet) 70%, #c026d3 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  padding-right: 0.08em;
-  margin-right: -0.04em;
+}
+
+.gold-text {
+  background: linear-gradient(95deg, var(--color-gold-hi), var(--color-gold) 60%, #e38b1b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* small uppercase label, the HUD's voice */
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--color-violet-hi);
+}
+
+.hud-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .balance {
@@ -130,27 +177,32 @@ body {
 
 .focus-ring:focus-visible,
 .btn:focus-visible {
-  outline: 2px solid var(--color-red);
+  outline: 2px solid var(--color-violet-hi);
   outline-offset: 3px;
 }
 
 .btn {
+  --bcut: 10px;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   height: 48px;
-  padding: 0 22px;
-  border-radius: 999px;
-  font-weight: 560;
+  padding: 0 24px;
+  border-radius: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 15px;
-  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   white-space: nowrap;
+  clip-path: polygon(var(--bcut) 0, 100% 0, 100% calc(100% - var(--bcut)), calc(100% - var(--bcut)) 100%, 0 100%, 0 var(--bcut));
   transition:
     transform 180ms var(--ease-out-expo),
     background-color 180ms ease,
     color 180ms ease,
-    box-shadow 180ms ease,
+    filter 180ms ease,
     opacity 180ms ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -165,40 +217,53 @@ body {
   opacity: 0.38;
 }
 
+/* primary: violet plate */
 .btn-ink {
-  background: var(--color-ink);
+  background: linear-gradient(100deg, #7c3aed, #9d5cff 55%, #b86bff);
   color: #fff;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.25);
 }
 
 .btn-ink:hover:not(:disabled) {
-  background: #000;
-  box-shadow: 0 10px 30px -12px rgb(23 23 23 / 0.55);
+  filter: brightness(1.12) saturate(1.1);
 }
 
+/* secondary: outlined plate */
 .btn-ghost {
-  background: transparent;
+  background:
+    linear-gradient(var(--color-paper), var(--color-paper)) padding-box,
+    linear-gradient(100deg, rgb(167 139 250 / 0.6), rgb(167 139 250 / 0.25)) border-box;
+  border: 1px solid transparent;
   color: var(--color-ink);
-  box-shadow: inset 0 0 0 1px var(--color-line-strong);
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: #fff;
-  box-shadow: inset 0 0 0 1px transparent;
+  background:
+    linear-gradient(#150b26, #150b26) padding-box,
+    linear-gradient(100deg, var(--color-violet-hi), var(--color-violet)) border-box;
 }
 
+/* bright plate for dark-on-light moments */
 .btn-white {
-  background: #fff;
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: #0b0614;
 }
 
 .btn-white:hover:not(:disabled) {
-  box-shadow: 0 10px 30px -14px rgb(23 23 23 / 0.35);
+  filter: brightness(1.05);
+}
+
+.btn-gold {
+  background: linear-gradient(100deg, var(--color-gold-hi), var(--color-gold));
+  color: #1a1004;
 }
 
 .btn-sm {
+  --bcut: 8px;
   height: 38px;
   padding: 0 16px;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
 }
 
 .link-underline {
@@ -213,7 +278,7 @@ body {
   background-size: 100% 1px;
 }
 
-/* range input, styled as a Mezo-native slider */
+/* range input: a segmented HUD track */
 .range {
   -webkit-appearance: none;
   appearance: none;
@@ -229,63 +294,122 @@ body {
 }
 
 .range::-webkit-slider-runnable-track {
-  height: 6px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-ink) 0 var(--pct), rgb(23 23 23 / 0.1) var(--pct) 100%);
+  height: 8px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 5px, rgb(7 4 13 / 0.9) 5px 7px),
+    linear-gradient(90deg, var(--color-violet) 0, var(--color-violet-hi) var(--pct), rgb(167 139 250 / 0.14) var(--pct) 100%);
 }
 
 .range::-moz-range-track {
-  height: 6px;
-  border-radius: 999px;
-  background: rgb(23 23 23 / 0.1);
+  height: 8px;
+  background: rgb(167 139 250 / 0.14);
 }
 
 .range::-moz-range-progress {
-  height: 6px;
-  border-radius: 999px;
-  background: var(--color-ink);
+  height: 8px;
+  background: var(--color-violet);
 }
 
 .range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 14px;
+  height: 26px;
   margin-top: -9px;
-  border-radius: 999px;
   background: #fff;
-  box-shadow:
-    0 0 0 1px rgb(23 23 23 / 0.12),
-    0 4px 12px -2px rgb(23 23 23 / 0.25);
+  clip-path: polygon(50% 0, 100% 22%, 100% 78%, 50% 100%, 0 78%, 0 22%);
+  box-shadow: 0 0 16px rgb(182 156 255 / 0.9);
   transition: transform 160ms var(--ease-out-expo);
 }
 
 .range::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
+  width: 14px;
+  height: 26px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 2px;
   background: #fff;
-  box-shadow:
-    0 0 0 1px rgb(23 23 23 / 0.12),
-    0 4px 12px -2px rgb(23 23 23 / 0.25);
 }
 
 .range:active::-webkit-slider-thumb {
   transform: scale(1.12);
 }
 
-.range:focus-visible::-webkit-slider-thumb {
-  box-shadow:
-    0 0 0 4px rgb(255 0 77 / 0.25),
-    0 4px 12px -2px rgb(23 23 23 / 0.25);
-}
-
 /* ---------- surfaces ---------- */
 
-.card {
-  background: #fff;
-  border-radius: var(--radius-card);
+/* the HUD panel: two cut corners, a hairline, a soft inner glow */
+.card,
+.hud {
+  --c: var(--cut);
+  --bd: rgb(167 139 250 / 0.24);
+  position: relative;
+  background:
+    linear-gradient(180deg, rgb(139 92 246 / 0.07), rgb(139 92 246 / 0) 40%) padding-box,
+    linear-gradient(160deg, #150c26, #0d0718) padding-box,
+    linear-gradient(160deg, rgb(182 156 255 / 0.45), rgb(167 139 250 / 0.12) 45%, rgb(167 139 250 / 0.3)) border-box;
+  border: 1px solid transparent;
+  border-radius: 0;
+  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+}
+
+.card::before,
+.hud::before,
+.card::after,
+.hud::after {
+  content: "";
+  position: absolute;
+  width: calc(var(--c) * 1.4142);
+  height: 1px;
+  background: rgb(182 156 255 / 0.55);
+  pointer-events: none;
+}
+
+.card::before,
+.hud::before {
+  left: -1px;
+  top: calc(var(--c) - 1px);
+  transform-origin: 0 50%;
+  transform: rotate(-45deg);
+}
+
+.card::after,
+.hud::after {
+  right: -1px;
+  bottom: calc(var(--c) - 1px);
+  transform-origin: 100% 50%;
+  transform: rotate(-45deg);
+}
+
+.hud-lg {
+  --c: 22px;
+}
+
+.card.glass,
+.hud.glass {
+  background:
+    linear-gradient(180deg, rgb(18 10 31 / 0.72), rgb(9 5 16 / 0.35)) padding-box,
+    linear-gradient(160deg, rgb(182 156 255 / 0.55), rgb(167 139 250 / 0.12) 45%, rgb(167 139 250 / 0.4)) border-box;
+}
+
+/* lighter "sheet" panel, the reference's white plates */
+.sheet {
+  --c: 18px;
+  position: relative;
+  background: #f4f1fb;
+  color: #120a1f;
+  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+}
+
+/* corner brackets for featured frames */
+.brackets {
+  position: relative;
+}
+
+.brackets > .bk {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--color-violet-hi);
+  pointer-events: none;
 }
 
 .hairline-t {
@@ -295,7 +419,7 @@ body {
 .shimmer {
   position: relative;
   overflow: hidden;
-  background: rgb(23 23 23 / 0.055);
+  background: rgb(167 139 250 / 0.08);
 }
 
 .shimmer::after {
@@ -303,7 +427,7 @@ body {
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.75), transparent);
+  background: linear-gradient(90deg, transparent, rgb(182 156 255 / 0.22), transparent);
   animation: shimmer 1.4s ease-in-out infinite;
 }
 
@@ -311,6 +435,27 @@ body {
   to {
     transform: translateX(100%);
   }
+}
+
+/* segmented progress bar (epoch, boost, budgets) */
+.ticks {
+  --fill: 50%;
+  --mark: 0%;
+  height: 26px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, var(--color-paper) 3px 6px),
+    linear-gradient(
+      90deg,
+      var(--color-violet) 0,
+      var(--color-violet-hi) var(--fill),
+      rgb(167 139 250 / 0.16) var(--fill) 100%
+    );
+}
+
+/* dot matrix texture */
+.dots {
+  background-image: radial-gradient(rgb(182 156 255 / 0.45) 1px, transparent 1.2px);
+  background-size: 7px 7px;
 }
 
 /* small flywheel loader */
@@ -349,9 +494,31 @@ body {
   height: 1.05em;
   margin-left: 1px;
   vertical-align: -0.16em;
-  background: var(--color-red);
-  border-radius: 2px;
+  background: var(--color-violet-hi);
   animation: caret 0.9s steps(1) infinite;
+}
+
+@keyframes hud-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.hud-pulse {
+  animation: hud-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes scanline {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -360,7 +527,8 @@ body {
   }
   .fw-spin-slow,
   .shimmer::after,
-  .caret {
+  .caret,
+  .hud-pulse {
     animation: none;
   }
 }

@@ -52,7 +52,7 @@ export function Thinking({ tokenId, compact = false }: { tokenId: string; compac
         <span className="tnum ml-auto shrink-0 text-[13px] text-faint">{secs}s</span>
       </div>
       <div className="flex flex-col gap-3" aria-hidden>
-        <div className="shimmer h-7 w-[82%] rounded-lg" />
+        <div className="shimmer h-7 w-[82%] rounded-[3px]" />
         <div className="shimmer h-4 w-full rounded-md" />
         <div className="shimmer h-4 w-[92%] rounded-md" />
         <div className="shimmer h-4 w-[64%] rounded-md" />

@@ -137,10 +137,10 @@ export function ToggleField({ label, help, value, onChange }: { label: string; h
           role="switch"
           aria-checked={value}
           onClick={() => onChange(!value)}
-          className={`focus-ring relative h-[30px] w-[52px] shrink-0 rounded-full transition-colors duration-300 ${value ? "bg-ink" : "bg-ink/15"}`}
+          className={`focus-ring relative h-[30px] w-[52px] shrink-0 rounded-full transition-colors duration-300 ${value ? "bg-violet shadow-[0_0_14px_rgba(139,92,246,0.6)]" : "bg-ink/15"}`}
         >
           <motion.span
-            className="absolute left-[3px] top-[3px] h-6 w-6 rounded-full bg-white shadow-[0_2px_6px_rgba(23,23,23,0.25)]"
+            className="absolute left-[3px] top-[3px] h-6 w-6 rounded-full bg-[#fff] shadow-[0_2px_6px_rgba(0,0,0,0.25)]"
             animate={{ x: value ? 22 : 0 }}
             transition={{ type: "spring", stiffness: 520, damping: 34 }}
           />
@@ -167,7 +167,7 @@ export function AmountField({
   const id = useId();
   return (
     <Field label={label} help={help} htmlFor={id}>
-      <div className="flex h-12 items-center rounded-2xl bg-paper px-4 focus-within:ring-2 focus-within:ring-red/30">
+      <div className="flex h-12 items-center rounded-[3px] bg-paper px-4 focus-within:ring-2 focus-within:ring-red/30">
         <input
           id={id}
           inputMode="decimal"

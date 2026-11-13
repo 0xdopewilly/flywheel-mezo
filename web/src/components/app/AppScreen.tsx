@@ -138,14 +138,14 @@ export function AppScreen() {
           <div className="flex shrink-0 flex-col gap-1 md:items-end md:text-right">
             <p className="text-[13.5px] text-muted">{market ? `Epoch from ${fmtEpoch(market.epoch)}, voting closes in` : "Voting closes in"}</p>
             <p className="text-[26px] font-semibold leading-none tracking-[-0.03em]">
-              {market ? <Countdown to={market.voteClosesAt} seconds={false} /> : <span className="shimmer inline-block h-7 w-36 rounded-lg" />}
+              {market ? <Countdown to={market.voteClosesAt} seconds={false} /> : <span className="shimmer inline-block h-7 w-36 rounded-[3px]" />}
             </p>
           </div>
         </header>
 
         <AnimatePresence>
           {wrongChain && (
-            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[20px] bg-blush px-5 py-4">
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[3px] bg-blush px-5 py-4">
               <p className="text-[14.5px] font-medium">Your wallet is on another network. Flywheel runs on Mezo testnet.</p>
               <ConnectPill />
             </motion.div>
@@ -214,22 +214,19 @@ export function AppScreen() {
 
 function DemoCard({ onConnect }: { onConnect: () => void }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] bg-ink p-6 text-white sm:p-7">
-      <svg className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 opacity-[0.22]" viewBox="0 0 32 32" fill="none" aria-hidden>
-        <circle cx="16" cy="16" r="11.5" stroke="#fff" strokeOpacity="0.5" strokeWidth="1" />
-        <g className="fw-spin-slow">
-          <path d="M16 4.5A11.5 11.5 0 0 1 27.2 18.6" stroke="#FF004D" strokeWidth="1.2" strokeLinecap="round" />
-        </g>
-      </svg>
-      <p className="text-[13.5px] text-white/60">Demo mode</p>
-      <h2 className="mt-1 text-[22px] font-semibold tracking-[-0.025em]">
-        veBTC <span className="serif-accent text-[1.12em]">#{DEMO_TOKEN_ID}</span>
-      </h2>
-      <p className="pretty mt-2 text-[14.5px] leading-relaxed text-white/70">
-        A real position Flywheel already pilots on Mezo testnet, read-only here. Its journal below is read straight from the chain. Change the limits
-        and watch the plan change, or connect a wallet with veBTC to put yours on autopilot.
+    <section className="hud hud-lg relative overflow-hidden p-6 sm:p-7" style={{ boxShadow: "inset 0 0 60px rgba(139,92,246,0.18)" }}>
+      <div className="dots pointer-events-none absolute right-5 top-5 h-[46px] w-[46px] opacity-50" aria-hidden />
+      <p className="eyebrow flex items-center gap-2">
+        <span className="hud-pulse h-1.5 w-1.5 bg-ok" /> Demo mode · read-only
       </p>
-      <button type="button" onClick={onConnect} className="btn btn-white btn-sm mt-5">
+      <h2 className="display mt-3 text-[38px] leading-none">
+        <span className="normal-case">ve</span>BTC <span className="gold-text">#{DEMO_TOKEN_ID}</span>
+      </h2>
+      <p className="pretty mt-3 text-[14px] leading-relaxed text-muted">
+        A real position Flywheel pilots on Mezo testnet. It came from the app’s test faucet, the same way yours can. The journal below is read straight
+        from the chain. Move the limits and watch the plan change.
+      </p>
+      <button type="button" onClick={onConnect} className="btn btn-ink btn-sm mt-5">
         Connect wallet
       </button>
     </section>
@@ -258,7 +255,7 @@ function ReplanPill({ fetching, headline }: { fetching: boolean; headline?: stri
         <motion.button
           type="button"
           onClick={() => document.getElementById("plan")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-          className="fixed bottom-5 left-4 right-4 z-40 flex items-center gap-3 rounded-full bg-ink py-2.5 pl-3 pr-5 text-left text-white shadow-[0_20px_40px_-16px_rgba(23,23,23,0.6)] lg:hidden"
+          className="fixed bottom-5 left-4 right-4 z-40 flex items-center gap-3 rounded-full bg-ink py-2.5 pl-3 pr-5 text-left text-white shadow-[0_20px_40px_-16px_rgba(0,0,0,0.6)] lg:hidden"
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}

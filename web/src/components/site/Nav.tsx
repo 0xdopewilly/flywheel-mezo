@@ -9,6 +9,7 @@ import { Logo } from "@/components/brand/Logo";
 const LINKS = [
   { href: "/how", label: "How it works" },
   { href: "/app", label: "App" },
+  { href: "/deck", label: "Deck" },
 ];
 
 export function Nav({ right }: { right?: ReactNode }) {
@@ -24,7 +25,7 @@ export function Nav({ right }: { right?: ReactNode }) {
         initial={false}
         animate={{ opacity: scrolled ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        style={{ borderColor: "rgba(23,23,23,0.06)" }}
+        style={{ borderColor: "rgba(167,139,250,0.14)" }}
       />
       <nav className="shell relative flex h-[68px] items-center justify-between gap-3 md:h-[76px]">
         <Logo />
@@ -33,19 +34,19 @@ export function Nav({ right }: { right?: ReactNode }) {
             <Link
               key={l.href}
               href={l.href}
-              className={`focus-ring hidden rounded-full px-3.5 py-2 text-[15px] font-medium transition-colors sm:inline-block ${
-                path === l.href ? "text-ink" : "text-muted hover:text-ink"
+              className={`focus-ring relative hidden px-3.5 py-2 font-[family-name:var(--font-display)] text-[14px] font-semibold uppercase tracking-[0.14em] transition-colors sm:inline-block ${
+                path === l.href ? "text-ink after:absolute after:inset-x-3.5 after:-bottom-0.5 after:h-[2px] after:bg-violet-hi" : "text-muted hover:text-ink"
               }`}
             >
               {l.label}
             </Link>
           ))}
-          <Link href="/how" className={`focus-ring rounded-full px-2.5 py-2 text-[14px] font-medium sm:hidden ${path === "/how" ? "text-ink" : "text-muted"}`}>
+          <Link href="/how" className={`focus-ring px-2.5 py-2 font-[family-name:var(--font-display)] text-[14px] font-semibold uppercase tracking-[0.12em] sm:hidden ${path === "/how" ? "text-ink" : "text-muted"}`}>
             How
           </Link>
           {right ?? (
             <Link href="/app" className="btn btn-ink btn-sm ml-1">
-              Open the app
+              Launch app
               <Arrow />
             </Link>
           )}

@@ -18,11 +18,12 @@ export function BoostLive() {
     );
   }
   const items = [
-    { k: "All veBTC voting power", v: <CountUp value={b.veBtcTotalUnboosted} format={(x) => `${fmtVe(x)} veBTC`} /> },
-    { k: "All veMEZO voting power", v: <CountUp value={b.veMezoTotal} format={(x) => `${Math.round(x).toLocaleString("en-US")}`} /> },
+    { k: "All veBTC voting power", v: <CountUp value={b.veBtcTotalUnboosted} format={(x) => `${fmtVe(x)} veBTC`} />, tone: "text-gold" },
+    { k: "All veMEZO voting power", v: <CountUp value={b.veMezoTotal} format={(x) => `${Math.round(x).toLocaleString("en-US")}`} />, tone: "text-ink" },
     {
       k: "What boost gauges pay per veMEZO vote",
       v: b.usdPerVeMezo > 0 ? <span>{fmtUsd(b.usdPerVeMezo)}</span> : <span>Nothing yet</span>,
+      tone: b.usdPerVeMezo > 0 ? "text-gold" : "text-violet-hi",
       note:
         b.usdPerVeMezo > 0
           ? `median of ${b.sampled} paying boost gauge${b.sampled === 1 ? "" : "s"}`
@@ -30,12 +31,12 @@ export function BoostLive() {
     },
   ];
   return (
-    <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-3">
+    <dl className="grid gap-px bg-line sm:grid-cols-3">
       {items.map((it) => (
-        <div key={it.k}>
-          <dt className="text-[13px] leading-snug text-muted">{it.k}</dt>
-          <dd className="tnum mt-1 text-[22px] font-semibold tracking-[-0.03em]">{it.v}</dd>
-          {it.note && <dd className="mt-0.5 text-[12.5px] text-faint">{it.note}</dd>}
+        <div key={it.k} className="bg-[#0f0820] px-4 py-4 sm:px-5">
+          <dt className="text-[12.5px] leading-snug text-muted">{it.k}</dt>
+          <dd className={`hud-num mt-2 text-[26px] leading-none ${it.tone}`}>{it.v}</dd>
+          {it.note && <dd className="mt-2 text-[12.5px] leading-snug text-faint">{it.note}</dd>}
         </div>
       ))}
     </dl>

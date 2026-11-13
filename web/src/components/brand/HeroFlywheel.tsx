@@ -34,7 +34,7 @@ const r2 = (v: number) => Math.round(v * 100) / 100;
 const at = (clockDeg: number, r = R) => [r2(C + r * Math.cos(rad(clockDeg))), r2(C + r * Math.sin(rad(clockDeg)))] as const;
 
 const lerpColor = (t: number) => {
-  // #FF004D -> #6B0036
+  // #B69CFF -> #6D28D9
   const a = [255, 0, 77];
   const b = [107, 0, 54];
   return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(",")})`;
@@ -121,7 +121,7 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
             const major = i % 13 === 6 || i % 13 === 7;
             const [x1, y1] = at(deg, 255);
             const [x2, y2] = at(deg, major ? 266 : 262);
-            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#171717" strokeOpacity={major ? 0.28 : 0.14} strokeWidth={1.4} strokeLinecap="round" />;
+            return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#F1ECFF" strokeOpacity={major ? 0.28 : 0.14} strokeWidth={1.4} strokeLinecap="round" />;
           })}
         </motion.g>
         <motion.circle
@@ -129,7 +129,7 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
           cy={C}
           r={R}
           fill="none"
-          stroke="#171717"
+          stroke="#F1ECFF"
           strokeOpacity={0.07}
           strokeWidth={BAND}
           transform={`rotate(-90 ${C} ${C})`}
@@ -142,7 +142,7 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
       {/* 2. inner dotted ring, slowly counter-rotating */}
       <motion.div className="absolute inset-0" style={{ rotate: slowRev }} aria-hidden>
         <svg viewBox="0 0 600 600" className="h-full w-full">
-          <circle cx={C} cy={C} r={186} fill="none" stroke="#171717" strokeOpacity={0.16} strokeWidth={2} strokeDasharray="0.1 9.6" strokeLinecap="round" />
+          <circle cx={C} cy={C} r={186} fill="none" stroke="#F1ECFF" strokeOpacity={0.16} strokeWidth={2} strokeDasharray="0.1 9.6" strokeLinecap="round" />
         </svg>
       </motion.div>
 
@@ -152,13 +152,13 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
           className="absolute inset-0 rounded-full"
           style={{
             background:
-              "conic-gradient(from 0deg, rgba(107,0,54,0) 0deg, rgba(107,0,54,0) 190deg, rgba(107,0,54,0.28) 260deg, rgba(160,0,60,0.7) 318deg, #e6004a 348deg, #FF004D 360deg)",
+              "conic-gradient(from 0deg, rgba(109,40,217,0) 0deg, rgba(109,40,217,0) 190deg, rgba(109,40,217,0.28) 260deg, rgba(139,92,246,0.7) 318deg, #a78bfa 348deg, #B69CFF 360deg)",
             WebkitMaskImage: `radial-gradient(circle closest-side, transparent ${((R - BAND / 2) / 3).toFixed(3)}%, #000 ${((R - BAND / 2) / 3 + 0.25).toFixed(3)}%, #000 ${((R + BAND / 2) / 3 - 0.25).toFixed(3)}%, transparent ${((R + BAND / 2) / 3).toFixed(3)}%)`,
             maskImage: `radial-gradient(circle closest-side, transparent ${((R - BAND / 2) / 3).toFixed(3)}%, #000 ${((R - BAND / 2) / 3 + 0.25).toFixed(3)}%, #000 ${((R + BAND / 2) / 3 - 0.25).toFixed(3)}%, transparent ${((R + BAND / 2) / 3).toFixed(3)}%)`,
           }}
         />
         <svg viewBox="0 0 600 600" className="absolute inset-0 h-full w-full">
-          <circle cx={C} cy={C - R} r={12.5} fill="#FF004D" stroke="#F4F0ED" strokeWidth={3} />
+          <circle cx={C} cy={C - R} r={12.5} fill="#B69CFF" stroke="#07040D" strokeWidth={3} />
           <circle cx={C} cy={C - R} r={4.2} fill="#fff" />
         </svg>
       </motion.div>
@@ -183,7 +183,7 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
       ))}
 
       {/* 6. hub */}
-      <div className="absolute left-1/2 top-1/2 flex aspect-square w-[52%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_40px_80px_-40px_rgba(23,23,23,0.35),0_0_0_1px_rgba(23,23,23,0.04)]">
+      <div className="absolute left-1/2 top-1/2 flex aspect-square w-[52%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-[0_40px_80px_-40px_rgba(0,0,0,0.35),0_0_0_1px_rgba(0,0,0,0.04)]">
         <div className="relative flex h-[62%] w-[74%] flex-col items-center justify-center text-center">
           <AnimatePresence initial={false}>
             <motion.div
@@ -207,7 +207,7 @@ export function HeroFlywheel({ className = "" }: { className?: string }) {
               <span
                 key={i}
                 className="h-[3px] rounded-full transition-all duration-500"
-                style={{ width: i === active ? 18 : 6, background: i === active ? "#171717" : "rgba(23,23,23,0.15)" }}
+                style={{ width: i === active ? 18 : 6, background: i === active ? "#F1ECFF" : "rgba(241,236,255,0.15)" }}
               />
             ))}
           </div>
@@ -238,7 +238,7 @@ function Station({ index, name, angle, active }: { index: number; name: string; 
       transition={{ duration: 0.6, ease: EASE, delay: 0.55 + index * 0.09 }}
     >
       <div
-        className="relative flex items-center rounded-full bg-white font-semibold tracking-[-0.01em] text-ink shadow-[0_1px_0_rgba(23,23,23,0.04),0_12px_28px_-12px_rgba(23,23,23,0.35)]"
+        className="relative flex items-center rounded-full bg-white font-semibold tracking-[-0.01em] text-ink shadow-[0_1px_0_rgba(0,0,0,0.04),0_12px_28px_-12px_rgba(0,0,0,0.35)]"
         style={{ fontSize: "clamp(12.5px, 2.6cqw, 15.5px)", height: "clamp(34px, 7.6cqw, 46px)", padding: "0 clamp(12px, 2.6cqw, 17px) 0 clamp(10px, 2.2cqw, 14px)", gap: "clamp(6px, 1.3cqw, 9px)" }}
       >
         <span className="relative grid place-items-center">

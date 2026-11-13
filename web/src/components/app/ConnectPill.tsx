@@ -11,7 +11,7 @@ function Avatar({ address }: { address: string }) {
   return (
     <span
       className="h-6 w-6 shrink-0 rounded-full"
-      style={{ background: `conic-gradient(from ${n % 360}deg, ${a} 0 50%, ${b} 50% 100%)`, boxShadow: "inset 0 0 0 1px rgba(23,23,23,0.08)" }}
+      style={{ background: `conic-gradient(from ${n % 360}deg, ${a} 0 50%, ${b} 50% 100%)`, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.08)" }}
       aria-hidden
     />
   );
@@ -31,12 +31,12 @@ export function ConnectPill({ size = "sm" }: { size?: "sm" | "lg" }) {
           );
         if (chain.unsupported)
           return (
-            <button type="button" onClick={openChainModal} className={`${cls} bg-red text-white`}>
+            <button type="button" onClick={openChainModal} className={`${cls} bg-red text-[#fff]`}>
               Switch to Mezo testnet
             </button>
           );
         return (
-          <button type="button" onClick={openAccountModal} className={`${cls} btn-white gap-2 pl-1.5 shadow-[0_1px_0_rgba(23,23,23,0.05)]`}>
+          <button type="button" onClick={openAccountModal} className={`${cls} btn-white gap-2 pl-1.5 shadow-[0_1px_0_rgba(0,0,0,0.05)]`}>
             <Avatar address={account.address} />
             <span className="tnum">{account.displayName}</span>
           </button>

@@ -38,7 +38,7 @@ export function Positions({
       {!positions && loading ? (
         <div className="flex flex-col gap-3">
           <Loader label="Looking for veBTC in this wallet…" />
-          <div className="shimmer h-[76px] rounded-[20px]" />
+          <div className="shimmer h-[76px] rounded-[3px]" />
         </div>
       ) : !positions && error ? (
         <ErrorState title="Couldn’t read your veBTC" detail={(error as Error).message} onRetry={onRetry} />
@@ -70,8 +70,8 @@ export function Positions({
                   role="radio"
                   aria-checked={on}
                   onClick={() => onSelect(p.tokenId)}
-                  className={`focus-ring w-full rounded-[20px] p-4 text-left transition-[background-color,box-shadow] duration-300 ${
-                    on ? "bg-white shadow-[inset_0_0_0_2px_#171717]" : "bg-paper hover:bg-paper-deep"
+                  className={`focus-ring w-full rounded-[3px] p-4 text-left transition-[background-color,box-shadow] duration-300 ${
+                    on ? "bg-white shadow-[inset_0_0_0_2px_#F1ECFF]" : "bg-paper hover:bg-paper-deep"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -115,7 +115,7 @@ function FaucetClaim({ owner, onFunded }: { owner: string; onFunded?: (tokenId: 
   }, []);
   if (available === false && state === "idle") return null;
   return (
-    <div className="mt-4 rounded-[20px] bg-paper p-4">
+    <div className="mt-4 rounded-[3px] bg-paper p-4">
       {state === "done" ? (
         <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: EASE }}>
           <p className="text-[14.5px] font-semibold">{msg}</p>
@@ -152,7 +152,7 @@ function FaucetClaim({ owner, onFunded }: { owner: string; onFunded?: (tokenId: 
           >
             {state === "busy" ? (
               <>
-                <FlywheelMark size={16} spinning className="text-white" /> Locking test BTC…
+                <FlywheelMark size={16} spinning className="text-[#fff]" /> Locking test BTC…
               </>
             ) : (
               "Get a test veBTC"

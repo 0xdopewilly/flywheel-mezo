@@ -56,7 +56,7 @@ export function GaugeTable({ plan }: { plan?: LivePlan }) {
               >
                 <span className="flex min-w-0 items-center gap-2">
                   <span className="truncate font-medium">{g.label}</span>
-                  {pct !== undefined && <span className="shrink-0 rounded-full bg-red px-2 py-0.5 text-[11.5px] font-semibold text-white">{Math.round(pct)}%</span>}
+                  {pct !== undefined && <span className="shrink-0 border border-violet-hi/50 bg-violet/20 px-2 py-0.5 text-[11.5px] font-bold text-violet-hi">{Math.round(pct)}%</span>}
                 </span>
                 <span className="text-right">{fmtUsd(g.rewardUsd)}</span>
                 <span className="hidden text-right text-muted sm:block">{fmtVe(g.votes)}</span>

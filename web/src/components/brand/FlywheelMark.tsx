@@ -38,15 +38,15 @@ export function FlywheelMark({
     >
       <defs>
         <linearGradient id={`g${id}`} x1={x0} y1={y0} x2={x1} y2={y1} gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#6B0036" stopOpacity="0" />
-          <stop offset="0.45" stopColor="#6B0036" stopOpacity="0.9" />
-          <stop offset="1" stopColor="#FF004D" />
+          <stop offset="0" stopColor="#6D28D9" stopOpacity="0" />
+          <stop offset="0.45" stopColor="#6D28D9" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#B69CFF" />
         </linearGradient>
       </defs>
       <circle cx={c} cy={c} r={r} stroke="currentColor" strokeOpacity="0.14" strokeWidth="3.2" />
       <g className={spinning ? "fw-spin" : undefined}>
         <path d={`M ${x0} ${y0} A ${r} ${r} 0 0 1 ${x1} ${y1}`} stroke={`url(#g${id})`} strokeWidth="3.2" strokeLinecap="round" />
-        <circle cx={x1} cy={y1} r="2.6" fill="#FF004D" />
+        <circle cx={x1} cy={y1} r="2.6" fill="#B69CFF" />
       </g>
       {[-90, 0, 90, 180].map((deg) => {
         const [x, y] = p(deg);

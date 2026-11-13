@@ -93,7 +93,7 @@ export function EnablePanel({
   if (!pilot) {
     return (
       <Shell title="Put it on autopilot">
-        <div className="rounded-2xl bg-sand/70 p-4 text-[14px] leading-relaxed text-ink/80">
+        <div className="rounded-[3px] bg-sand/70 p-4 text-[14px] leading-relaxed text-ink/80">
           The Flywheel contract is on its way to Mezo testnet. Enabling opens here the moment it’s live. Until then, every limit above already
           re-plans the brain live.
         </div>
@@ -212,9 +212,16 @@ export function Shell({ title, badge, children, right }: { title: string; badge?
     <section className="card p-5 sm:p-7">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <h2 className="text-[19px] font-semibold tracking-[-0.02em]">{title}</h2>
+          <h2 className="font-[family-name:var(--font-display)] text-[20px] font-bold uppercase tracking-[0.08em]">{title}</h2>
           {badge && (
-            <span className={`rounded-full px-2.5 py-0.5 text-[12.5px] font-semibold ${badge === "Running" ? "bg-lime text-ink" : "bg-sand text-ink"}`}>{badge}</span>
+            <span
+              className={`flex items-center gap-1.5 border px-2.5 py-0.5 text-[11.5px] font-semibold uppercase tracking-[0.14em] ${
+                badge === "Running" ? "border-ok/40 text-ok" : "border-gold/40 text-gold"
+              }`}
+            >
+              <span className={`h-1.5 w-1.5 ${badge === "Running" ? "hud-pulse bg-ok" : "bg-gold"}`} />
+              {badge}
+            </span>
           )}
         </div>
         {right}
@@ -250,7 +257,7 @@ function Step({
   const busy = tx?.status === "signing" || tx?.status === "mining";
   const done = state === "done" || tx?.status === "done";
   return (
-    <li className={`rounded-[20px] p-4 transition-colors duration-500 ${done ? "bg-lime/70" : state === "ready" ? "bg-paper" : "bg-paper/50"}`}>
+    <li className={`rounded-[3px] p-4 transition-colors duration-500 ${done ? "bg-lime/70" : state === "ready" ? "bg-paper" : "bg-paper/50"}`}>
       <div className="flex gap-3.5">
         <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center">
           <AnimatePresence mode="wait" initial={false}>
@@ -260,8 +267,8 @@ function Step({
               </motion.span>
             ) : done ? (
               <motion.svg key="d" width="26" height="26" viewBox="0 0 26 26" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 500, damping: 26 }} aria-label="Done">
-                <circle cx="13" cy="13" r="12" fill="#171717" />
-                <motion.path d="m8 13.4 3.3 3.2 6.7-7.1" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.1 }} />
+                <circle cx="13" cy="13" r="12" fill="#3EE0A1" />
+                <motion.path d="m8 13.4 3.3 3.2 6.7-7.1" fill="none" stroke="#07040D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4, delay: 0.1 }} />
               </motion.svg>
             ) : (
               <motion.span

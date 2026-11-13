@@ -163,6 +163,12 @@ export function AppScreen() {
                 selected={selected}
                 onSelect={setSelected}
                 onPreviewDemo={() => document.getElementById("plan")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                owner={address}
+                onFunded={(id) => {
+                  setSelected(id);
+                  refreshPositions();
+                  setTimeout(refreshPositions, 4000);
+                }}
               />
             ) : (
               <DemoCard onConnect={() => openConnectModal?.()} />

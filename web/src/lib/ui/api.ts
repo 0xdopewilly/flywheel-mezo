@@ -2,6 +2,8 @@
 
 import type { JournalResponse, MarketSnapshot, PlanResponse, PositionsResponse, RunResponse, UiPolicy } from "./types";
 
+export type FaucetResponse = { tokenId: string; lockTx: string; gasTx?: string; musdTx?: string; musd: string };
+
 export class ApiError extends Error {
   status: number;
   constructor(message: string, status: number) {
@@ -47,6 +49,14 @@ export const api = {
     request<PlanResponse>(`/api/plan?${planQuery(tokenId, p, musd)}`, { timeoutMs: 60_000 }),
   positions: (owner: string) => request<PositionsResponse>(`/api/positions?owner=${owner}`, { timeoutMs: 40_000 }),
   journal: (tokenId: string) => request<JournalResponse>(`/api/journal?tokenId=${tokenId}`, { timeoutMs: 40_000 }),
+  faucet: (address: string) =>
+    request<FaucetResponse>("/api/faucet", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ address }),
+      timeoutMs: 120_000,
+    }),
+  faucetStatus: () => request<{ available: boolean; claimsLeft: number }>("/api/faucet", { timeoutMs: 20_000 }),
   run: (tokenId: string) =>
     request<RunResponse>("/api/pilot/run", {
       method: "POST",

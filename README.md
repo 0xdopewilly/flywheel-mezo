@@ -10,6 +10,18 @@
 
 ---
 
+## Try it yourself (about 2 minutes, Mezo testnet)
+
+You don't need test BTC or an existing veBTC.
+
+1. Open https://flywheel-mezo.vercel.app/app and connect any EVM wallet (Mezo Passport, MetaMask, Rabby…). The app switches it to Mezo testnet.
+2. No veBTC yet? Click **Get a test veBTC**. Flywheel's testnet faucet locks 0.0008 test BTC into a veBTC minted straight to your wallet (`veBTC.createLockFor`), and adds a little BTC for gas plus 15 MUSD.
+3. Set your limits, then **Let Flywheel vote this veBTC** (approve), **Save your limits on-chain** (enroll) and **Allow the reinvest budget** (MUSD allowance).
+4. Click **Run the brain now**. It votes inside your limits and publishes its plan onchain, then compounds your MUSD into boost incentives and the Savings Vault (the sMUSD lands in your wallet). The journal at the bottom of the page reads the plan back from the chain.
+5. **Exit** whenever you like, or revoke the approval in your wallet.
+
+Mezo allows one vote per veBTC per epoch, so a second run in the same week skips the vote and only harvests and compounds.
+
 ## The problem
 
 A veBTC only earns if someone votes it every week. Each Thursday at 00:00 UTC Mezo opens a new epoch. Someone has to vote the veBTC across the live gauges (17 on testnet, 28 on mainnet), weighing each gauge's incentives against how much veBTC is already voting there. Then they claim incentives and fees from every gauge they voted, and decide whether to buy boost from veMEZO voters. Finally they put the MUSD to work. Most holders vote once and forget, or pile into the most crowded gauge, where each vote earns least.

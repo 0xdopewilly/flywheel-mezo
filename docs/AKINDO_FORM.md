@@ -44,6 +44,8 @@ What's shown (testnet, not users): FlywheelPilot is deployed and verified on Mez
 
 A mainnet fork test shows Flywheel harvesting exactly the 21.0099 MUSD Mezo owed a real mainnet veBTC (#5803) to its owner, and the owner's cap rejecting an all-in vote on the live mainnet voter. The contract keeps nothing.
 
+How to test: open https://flywheel-mezo.vercel.app/app, connect any wallet and click "Get a test veBTC". Our testnet faucet mints a small veBTC to your wallet, with gas and 15 MUSD. Then approve, enroll and click "Run the brain now" to see your own vote, plan and compound onchain.
+
 **Target group**
 - **Who:** veBTC holders on Mezo, at any experience level. That includes small lockers who never vote, and larger holders who vote but leave boost and idle MUSD on the table.
 - **Why Track 1:** it turns veBTC and the MUSD it earns into productive, auto-compounding capital, plugged into Mezo's vote-escrow and boost systems.

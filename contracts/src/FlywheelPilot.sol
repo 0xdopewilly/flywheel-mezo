@@ -79,6 +79,7 @@ contract FlywheelPilot is ReentrancyGuard, Ownable2Step {
     event PlanVoted(
         uint256 indexed tokenId, uint256 indexed epoch, bytes32 indexed planHash, address[] pools, uint256[] weights
     );
+    event PlanPublished(uint256 indexed tokenId, uint256 indexed epoch, bytes32 indexed planHash, bytes plan);
     event Harvested(uint256 indexed tokenId, address indexed owner, uint256 bribeContracts, uint256 feeContracts);
     event Compounded(
         uint256 indexed tokenId,
@@ -192,8 +193,10 @@ contract FlywheelPilot is ReentrancyGuard, Ownable2Step {
     // ------------------------------------------------------------------
 
     /// @notice Cast the brain's vote for this epoch, if it fits the owner's policy.
-    /// @param planHash keccak256 of the brain's published plan (allocation plus reasoning).
-    function vote(uint256 tokenId, address[] calldata pools, uint256[] calldata weights, bytes32 planHash)
+    /// @param plan The brain's plan as UTF-8 JSON: the allocation, the numbers behind it and the
+    ///        reasoning in plain words. It is published in full in `PlanPublished`, so the
+    ///        explanation for every vote lives on-chain next to the vote itself.
+    function vote(uint256 tokenId, address[] calldata pools, uint256[] calldata weights, bytes calldata plan)
         external
         onlyKeeper
         nonReentrant
@@ -218,8 +221,11 @@ contract FlywheelPilot is ReentrancyGuard, Ownable2Step {
         }
 
         poolsVoter.vote(tokenId, pools, weights);
+        bytes32 planHash = keccak256(plan);
         lastPlanHash[tokenId] = planHash;
-        emit PlanVoted(tokenId, _epochStart(block.timestamp), planHash, pools, weights);
+        uint256 epoch = _epochStart(block.timestamp);
+        emit PlanPublished(tokenId, epoch, planHash, plan);
+        emit PlanVoted(tokenId, epoch, planHash, pools, weights);
     }
 
     /// @notice Claim the fees and incentives the veBTC has earned. Mezo pays them to the NFT owner.

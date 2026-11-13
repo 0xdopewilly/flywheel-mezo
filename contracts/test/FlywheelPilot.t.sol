@@ -135,10 +135,10 @@ contract FlywheelPilotTest is Test {
         _enroll();
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 55, poolB, 45);
         vm.prank(keeper);
-        pilot.vote(ID, pools, weights, keccak256("plan-1"));
+        pilot.vote(ID, pools, weights, bytes("plan-1"));
         assertEq(voter.votes(ID, poolA), 55);
         assertEq(voter.votes(ID, poolB), 45);
-        assertEq(pilot.lastPlanHash(ID), keccak256("plan-1"));
+        assertEq(pilot.lastPlanHash(ID), keccak256(bytes("plan-1")));
     }
 
     function test_vote_onlyKeeper() public {
@@ -146,7 +146,7 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 50, poolB, 50);
         vm.prank(mallory);
         vm.expectRevert(FlywheelPilot.NotKeeper.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
     }
 
     function test_vote_enforcesPoolShareCap() public {
@@ -154,7 +154,7 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 61, poolB, 39);
         vm.prank(keeper);
         vm.expectRevert(abi.encodeWithSelector(FlywheelPilot.PoolShareTooHigh.selector, poolA));
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
     }
 
     function test_vote_enforcesMinPools() public {
@@ -165,7 +165,7 @@ contract FlywheelPilotTest is Test {
         weights[0] = 1;
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.TooFewPools.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
     }
 
     function test_vote_rejectsDeadUnknownAndBlockedPools() public {
@@ -173,12 +173,12 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 50, poolDead, 50);
         vm.prank(keeper);
         vm.expectRevert(abi.encodeWithSelector(FlywheelPilot.PoolNotAllowed.selector, poolDead));
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
 
         (pools, weights) = _plan(poolA, 50, poolUnknown, 50);
         vm.prank(keeper);
         vm.expectRevert(abi.encodeWithSelector(FlywheelPilot.PoolNotAllowed.selector, poolUnknown));
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
 
         address[] memory blocked = new address[](1);
         blocked[0] = poolB;
@@ -187,7 +187,7 @@ contract FlywheelPilotTest is Test {
         (pools, weights) = _plan(poolA, 50, poolB, 50);
         vm.prank(keeper);
         vm.expectRevert(abi.encodeWithSelector(FlywheelPilot.PoolNotAllowed.selector, poolB));
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
     }
 
     function test_vote_rejectsZeroWeightsAndMismatch() public {
@@ -195,12 +195,12 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 0, poolB, 10);
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.BadPlan.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
         uint256[] memory short = new uint256[](1);
         short[0] = 1;
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.BadPlan.selector);
-        pilot.vote(ID, pools, short, bytes32(0));
+        pilot.vote(ID, pools, short, "");
     }
 
     function test_vote_stopsAfterNftLeavesOwner() public {
@@ -210,7 +210,7 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 50, poolB, 50);
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.OwnerChanged.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
         assertFalse(pilot.isLive(ID));
     }
 
@@ -221,7 +221,7 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 50, poolB, 50);
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.NotApproved.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
     }
 
     function test_exit_stopsEverything() public {
@@ -231,7 +231,7 @@ contract FlywheelPilotTest is Test {
         (address[] memory pools, uint256[] memory weights) = _plan(poolA, 50, poolB, 50);
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.NotEnrolled.selector);
-        pilot.vote(ID, pools, weights, bytes32(0));
+        pilot.vote(ID, pools, weights, "");
         vm.prank(keeper);
         vm.expectRevert(FlywheelPilot.NotEnrolled.selector);
         pilot.compound(ID, 1e18, 0, bytes32(0));

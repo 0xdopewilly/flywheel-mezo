@@ -95,7 +95,7 @@ contract MezoTestnetForkTest is Test {
         weights[2] = 2_000;
 
         vm.prank(keeper);
-        pilot.vote(id, pools, weights, keccak256("fork-plan"));
+        pilot.vote(id, pools, weights, bytes("{\"why\":\"fork\"}"));
 
         uint256 v0 = IVotes(address(voter)).votes(id, pools[0]);
         uint256 v1 = IVotes(address(voter)).votes(id, pools[1]);
@@ -122,7 +122,7 @@ contract MezoTestnetForkTest is Test {
         weights[1] = 1;
         vm.prank(keeper);
         vm.expectRevert(abi.encodeWithSelector(FlywheelPilot.PoolShareTooHigh.selector, pools[0]));
-        pilot.vote(id, pools, weights, bytes32(0));
+        pilot.vote(id, pools, weights, "");
     }
 
     function test_fork_compoundIntoRealBoostGaugeAndSavingsVault() public {

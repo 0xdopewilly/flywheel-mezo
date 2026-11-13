@@ -12,6 +12,8 @@ remappings = [
   "forge-std/=lib/forge-std/src/",
 ]
 fs_permissions = [{ access = "read-write", path = "./deployments" }]
+# fork tests need the cancun profile below: FOUNDRY_PROFILE=fork forge test
+no_match_path = "test/fork/*"
 
 [rpc_endpoints]
 mezo_testnet = "https://rpc.test.mezo.org"
@@ -24,3 +26,5 @@ mezo_testnet = { key = "verify", url = "https://api.explorer.test.mezo.org/api",
 # Flywheel itself is still compiled for london in the default profile, as Mezo's docs recommend.
 [profile.fork]
 evm_version = "cancun"
+match_path = "test/fork/*"
+no_match_path = "test/__none__/*"

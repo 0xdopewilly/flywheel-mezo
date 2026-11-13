@@ -73,7 +73,7 @@ function groundedNumbers(text: string, core: PlanCore): boolean {
   return true;
 }
 
-const money = (v: number) => (v >= 100 ? `$${v.toFixed(0)}` : v >= 1 ? `$${v.toFixed(2)}` : `$${v.toFixed(3)}`);
+const money = (v: number) => (v >= 100 ? `$${v.toFixed(0)}` : v >= 0.01 ? `$${v.toFixed(2)}` : "under $0.01");
 
 export function template(core: PlanCore): { headline: string; why: string } {
   const top = [...core.votes].sort((a, b) => b.pct - a.pct);

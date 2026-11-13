@@ -25,8 +25,8 @@ export function ShowsWork() {
               It shows its work, <span className="serif-accent energy-text">on-chain.</span>
             </h2>
             <p className="pretty mt-6 max-w-[460px] text-[17px] leading-[1.6] text-ink/70">
-              This is the brain’s live plan for a real veBTC on Mezo testnet, #{DEMO_TOKEN_ID}, computed from this epoch’s gauges. Every vote it
-              casts carries a plan like this one.
+              This is the brain’s live plan for veBTC #{DEMO_TOKEN_ID}, a real position Flywheel pilots on Mezo testnet, computed from this
+              epoch’s gauges. Every vote it casts carries a plan like this one, published in the same transaction.
             </p>
           </Reveal>
           <Stagger className="mt-10 flex flex-col gap-6" gap={0.1}>

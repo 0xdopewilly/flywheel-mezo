@@ -79,12 +79,27 @@ function keeperWallet() {
   return createWalletClient({ account, chain: mezoTestnet, transport: http(process.env.MEZO_RPC_URL ?? "https://rpc.test.mezo.org") });
 }
 
+type PilotFn = "vote" | "harvest" | "compound";
+
+/** Mezo's gas estimates run short on veBTC writes, so pad them, and treat a reverted receipt as a failure. */
+async function send(fn: PilotFn, args: readonly unknown[]): Promise<Hex> {
+  const c = publicClient();
+  const wallet = keeperWallet();
+  const call = { address: pilotAddress(), abi: pilotAbi, functionName: fn, args, account: wallet.account } as const;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const est = await c.estimateContractGas(call as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tx = await wallet.writeContract({ ...(call as any), gas: (est * 18n) / 10n });
+  const r = await c.waitForTransactionReceipt({ hash: tx, timeout: 60_000 });
+  if (r.status !== "success") throw new Error(`${fn} reverted in ${tx}`);
+  return tx;
+}
+
 /**
  * One keeper pass for one veBTC: vote if it hasn't this epoch, harvest anything claimable, then
  * compound MUSD the owner made available. Every step is checked again by the contract.
  */
 export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promise<{ actions: Action[]; plan?: Plan }> {
-  const c = publicClient();
   const actions: Action[] = [];
   const en = await readEnrollment(tokenId);
   if (!en || !en.enrollment.active) return { actions: [{ kind: "skip", reason: "This veBTC is not enrolled." }] };
@@ -95,7 +110,6 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
   const policy = toPolicyInput(en.enrollment.policy);
   const musdAvail = await compoundableMusd(tokenId, en.enrollment.owner);
   const plan = await finalize(buildCore(m, nft, policy, Number(musdAvail) / 1e18));
-  const wallet = keeperWallet();
   const now = Math.floor(Date.now() / 1000);
 
   // 1. vote
@@ -108,13 +122,7 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
   } else {
     const pools = plan.votes.map((v) => v.pool);
     const weights = plan.votes.map((v) => BigInt(v.bps));
-    const tx = await wallet.writeContract({
-      address: pilotAddress(),
-      abi: pilotAbi,
-      functionName: "vote",
-      args: [tokenId, pools, weights, toHex(plan.json)],
-    });
-    await c.waitForTransactionReceipt({ hash: tx, timeout: 60_000 });
+    const tx = await send("vote", [tokenId, pools, weights, toHex(plan.json)]);
     actions.push({ kind: "vote", tx, reason: plan.narrative.headline });
   }
 
@@ -132,13 +140,7 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
     const [bribes, bribeTokens] = group("incentive");
     const [fees, feeTokens] = group("fee");
     try {
-      const tx = await wallet.writeContract({
-        address: pilotAddress(),
-        abi: pilotAbi,
-        functionName: "harvest",
-        args: [tokenId, bribes, bribeTokens.map((t) => [...t]), fees, feeTokens.map((t) => [...t])],
-      });
-      await c.waitForTransactionReceipt({ hash: tx, timeout: 60_000 });
+      const tx = await send("harvest", [tokenId, bribes, bribeTokens.map((t) => [...t]), fees, feeTokens.map((t) => [...t])]);
       actions.push({ kind: "harvest", tx, reason: `Claimed ${nft.claimable.length} reward balances worth about $${plan.harvest.claimableUsd}.` });
     } catch (e) {
       actions.push({ kind: "skip", reason: `Harvest failed: ${(e as Error).message.slice(0, 140)}` });
@@ -153,13 +155,7 @@ export async function runPilot(tokenId: bigint, market?: MarketSnapshot): Promis
     if (!en.enrollment.policy.autoSave && en.enrollment.policy.boostShareBps < 10_000) {
       actions.push({ kind: "skip", reason: "Savings are off and the boost share is below 100%, so there is nothing to compound into." });
     } else {
-      const tx = await wallet.writeContract({
-        address: pilotAddress(),
-        abi: pilotAbi,
-        functionName: "compound",
-        args: [tokenId, musd, finalBps, plan.hash],
-      });
-      await c.waitForTransactionReceipt({ hash: tx, timeout: 60_000 });
+      const tx = await send("compound", [tokenId, musd, finalBps, plan.hash]);
       actions.push({
         kind: "compound",
         tx,

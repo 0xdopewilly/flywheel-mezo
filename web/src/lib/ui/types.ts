@@ -80,4 +80,5 @@ export type UiPolicy = {
 
 export const DEFAULT_UI_POLICY: UiPolicy = { cap: 0.6, minPools: 2, boostShare: 0.3, autoSave: true, pullCap: 100 };
 
-export const DEMO_TOKEN_ID = "1742";
+/** A real veBTC on Mezo testnet that Flywheel pilots (enrolled 2026-11-13, owner 0xb833…3c09). */
+export const DEMO_TOKEN_ID = "1752";

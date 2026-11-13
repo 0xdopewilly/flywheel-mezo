@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Position } from "@/lib/ui/types";
+import { DEMO_TOKEN_ID, type Position } from "@/lib/ui/types";
 import { fmtDay, fmtMult, fmtVe } from "@/lib/ui/format";
 import { ErrorState } from "@/components/site/States";
 import { Loader } from "@/components/brand/FlywheelMark";
@@ -39,14 +39,14 @@ export function Positions({
         <div>
           <p className="text-[15px] font-semibold">No veBTC in this wallet on Mezo testnet</p>
           <p className="pretty mt-1.5 text-[14px] leading-relaxed text-muted">
-            Lock BTC in Mezo Earn to get one. Until then, the brain’s plan for veBTC #1742 is shown read-only.
+            Lock BTC in Mezo Earn to get one. Until then, the brain’s plan for veBTC #{DEMO_TOKEN_ID} is shown read-only.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <a href="https://mezo.org" target="_blank" rel="noreferrer" className="btn btn-ink btn-sm">
               Go to Mezo
             </a>
             <button type="button" className="btn btn-ghost btn-sm" onClick={onPreviewDemo}>
-              Keep previewing #1742
+              Keep previewing #{DEMO_TOKEN_ID}
             </button>
           </div>
         </div>

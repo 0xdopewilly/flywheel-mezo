@@ -129,7 +129,7 @@ export function AppScreen() {
             </AnimatePresence>
             <p className="pretty mt-4 max-w-[600px] text-[16.5px] leading-relaxed text-ink/70">
               {!isConnected
-                ? `No wallet connected, so this is the live plan for veBTC #${DEMO_TOKEN_ID}, a real position on Mezo testnet. Connect a wallet to put your own veBTC on autopilot.`
+                ? `No wallet connected, so this is the live plan for veBTC #${DEMO_TOKEN_ID}, a real position Flywheel pilots on Mezo testnet. Connect a wallet to put your own veBTC on autopilot.`
                 : demo
                   ? `This wallet has no veBTC yet, so this is the live plan for veBTC #${DEMO_TOKEN_ID}, read-only.`
                   : `Pick a veBTC, set its limits, and turn on the autopilot. The plan below is computed live for veBTC #${tokenId}.`}
@@ -220,8 +220,8 @@ function DemoCard({ onConnect }: { onConnect: () => void }) {
         veBTC <span className="serif-accent text-[1.12em]">#{DEMO_TOKEN_ID}</span>
       </h2>
       <p className="pretty mt-2 text-[14.5px] leading-relaxed text-white/70">
-        A real position on Mezo testnet, read-only. Change the limits below and watch the plan change. Connect a wallet with veBTC to put yours on
-        autopilot.
+        A real position Flywheel already pilots on Mezo testnet, read-only here. Its journal below is read straight from the chain. Change the limits
+        and watch the plan change, or connect a wallet with veBTC to put yours on autopilot.
       </p>
       <button type="button" onClick={onConnect} className="btn btn-white btn-sm mt-5">
         Connect wallet

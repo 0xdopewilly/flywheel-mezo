@@ -35,7 +35,7 @@ export function Hero() {
     <section className="dark-island shell relative pt-2 md:pt-4" aria-labelledby="hero-title">
       <motion.div
         className="hud hud-lg glass relative overflow-hidden"
-        initial={{ opacity: 0, scale: 0.985 }}
+        initial={false}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: EASE }}
       >
@@ -46,13 +46,13 @@ export function Hero() {
         <Wings />
 
         <div className="relative z-10 flex flex-col items-center px-5 pb-7 pt-9 text-center sm:px-10 md:pt-14">
-          <motion.p className="eyebrow" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}>
+          <motion.p className="eyebrow" initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: EASE, delay: 0.1 }}>
             Mezo Earn · <span className="normal-case">ve</span>BTC autopilot
           </motion.p>
           <motion.h1
             id="hero-title"
             className="display mt-4 text-[clamp(42px,6.6vw,92px)] text-ink"
-            initial={{ opacity: 0, y: 18 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: EASE, delay: 0.15 }}
           >
@@ -60,7 +60,7 @@ export function Hero() {
           </motion.h1>
           <motion.p
             className="mt-3 font-[family-name:var(--font-display)] text-[clamp(14px,1.5vw,19px)] font-semibold uppercase tracking-[0.14em] text-violet-hi"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, ease: EASE, delay: 0.35 }}
           >
@@ -81,7 +81,7 @@ export function Hero() {
 
           {/* station caption */}
           <div className="relative h-[92px] w-full max-w-[520px]" aria-live="polite">
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div key={s.name} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.45, ease: EASE }}>
                 <p className="flex items-center justify-center gap-3">
                   <span className="hud-num text-[13px] tracking-[0.2em] text-gold">0{i + 1} / 04</span>
@@ -92,7 +92,7 @@ export function Hero() {
             </AnimatePresence>
           </div>
 
-          <motion.div className="mt-5 flex flex-wrap items-center justify-center gap-3" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
+          <motion.div className="mt-5 flex flex-wrap items-center justify-center gap-3" initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE, delay: 0.5 }}>
             <Link href="/app" className="btn btn-ink h-[52px] px-7">
               Launch app <Arrow />
             </Link>

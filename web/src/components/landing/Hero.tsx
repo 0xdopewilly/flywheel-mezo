@@ -32,7 +32,7 @@ export function Hero() {
   const s = STATIONS[i];
 
   return (
-    <section className="shell relative pt-2 md:pt-4" aria-labelledby="hero-title">
+    <section className="dark-island shell relative pt-2 md:pt-4" aria-labelledby="hero-title">
       <motion.div
         className="hud hud-lg glass relative overflow-hidden"
         initial={{ opacity: 0, scale: 0.985 }}

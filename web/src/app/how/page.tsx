@@ -127,7 +127,7 @@ export default function HowPage() {
             </div>
           </Reveal>
           <Reveal y={40} className="self-center">
-            <div className="hud hud-lg p-5 sm:p-8">
+            <div className="dark-island hud hud-lg p-5 sm:p-8">
               <div className="mb-6 flex items-center justify-between gap-4">
                 <p className="eyebrow">Water-filling</p>
                 <p className="font-[family-name:var(--font-display)] text-[12px] font-semibold uppercase tracking-[0.16em] text-faint">illustration</p>
@@ -170,7 +170,7 @@ export default function HowPage() {
               </div>
             </Reveal>
             <Reveal y={40} className="self-center">
-              <div className="hud hud-lg overflow-hidden p-6 sm:p-9">
+              <div className="dark-island hud hud-lg overflow-hidden p-6 sm:p-9">
                 <div className="dots pointer-events-none absolute right-6 top-6 h-14 w-28 opacity-50 [mask-image:linear-gradient(90deg,transparent,#000)]" aria-hidden />
                 <div
                   className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.3),transparent_68%)]"

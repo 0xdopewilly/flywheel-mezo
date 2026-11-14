@@ -45,6 +45,102 @@
   color-scheme: dark;
   --gutter: 20px;
   --cut: 14px;
+  --aurora-a: rgb(124 58 237 / 0.26);
+  --aurora-b: rgb(192 38 211 / 0.14);
+  --aurora-c: rgb(91 33 182 / 0.2);
+  --aurora-d: rgb(245 181 61 / 0.06);
+  --rings: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1800 1800' fill='none' stroke='%23b69cff'%3E%3Ccircle cx='900' cy='900' r='420' stroke-opacity='.5'/%3E%3Ccircle cx='900' cy='900' r='610' stroke-opacity='.35' stroke-dasharray='2 14'/%3E%3Ccircle cx='900' cy='900' r='780' stroke-opacity='.28'/%3E%3Ccircle cx='900' cy='900' r='880' stroke-opacity='.18' stroke-dasharray='60 30 4 30'/%3E%3Cpath d='M900 120v40M900 1640v40M120 900h40M1640 900h40' stroke-opacity='.6' stroke-width='2'/%3E%3Ccircle cx='900' cy='290' r='6' fill='%23f5b53d' stroke='none'/%3E%3Ccircle cx='1510' cy='900' r='4' fill='%23b69cff' stroke='none'/%3E%3C/svg%3E");
+  --rings-opacity: 0.32;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --energy-a: #d6c6ff;
+  --energy-b: #c026d3;
+  --dot: rgb(182 156 255 / 0.45);
+  --hud-a: #150c26;
+  --hud-b: #0d0718;
+  --hud-tint: rgb(139 92 246 / 0.07);
+  --hud-edge-1: rgb(182 156 255 / 0.45);
+  --hud-edge-2: rgb(167 139 250 / 0.12);
+  --hud-edge-3: rgb(167 139 250 / 0.3);
+  --hud-diag: rgb(182 156 255 / 0.55);
+  --glass-a: rgb(18 10 31 / 0.72);
+  --glass-b: rgb(9 5 16 / 0.35);
+}
+
+/* Light theme: lavender paper, white panels, deeper violet and gold for contrast. */
+[data-theme="light"] {
+  color-scheme: light;
+  --color-paper: #f4f1fb;
+  --color-paper-deep: #ebe6f7;
+  --color-white: #ffffff;
+  --color-ink: #1a1030;
+  --color-ink-2: #2e2349;
+  --color-muted: #5f5679;
+  --color-faint: #8d85a6;
+  --color-line: rgb(91 33 182 / 0.12);
+  --color-line-strong: rgb(91 33 182 / 0.26);
+  --color-red: #db1f5a;
+  --color-violet: #7c3aed;
+  --color-violet-hi: #6d28d9;
+  --color-violet-deep: #ede9fe;
+  --color-gold: #a86a00;
+  --color-gold-hi: #c98a0c;
+  --color-sand: #fbf3e2;
+  --color-lime: #e7f6ee;
+  --color-blush: #fde8ef;
+  --color-sky: #7c3aed;
+  --color-sky-soft: #f1ecfe;
+  --color-ok: #0c9466;
+  --aurora-a: rgb(167 139 250 / 0.32);
+  --aurora-b: rgb(240 171 252 / 0.3);
+  --aurora-c: rgb(196 181 253 / 0.34);
+  --aurora-d: rgb(253 224 171 / 0.4);
+  --rings-opacity: 0.45;
+  --energy-a: #7c3aed;
+  --energy-b: #a21caf;
+  --dot: rgb(124 58 237 / 0.3);
+  --hud-a: #ffffff;
+  --hud-b: #faf8ff;
+  --hud-tint: rgb(124 58 237 / 0.05);
+  --hud-edge-1: rgb(124 58 237 / 0.38);
+  --hud-edge-2: rgb(124 58 237 / 0.12);
+  --hud-edge-3: rgb(124 58 237 / 0.26);
+  --hud-diag: rgb(124 58 237 / 0.42);
+  --glass-a: rgb(255 255 255 / 0.82);
+  --glass-b: rgb(255 255 255 / 0.55);
+}
+
+/* Dark islands (the 3D hero, the deck, diagram screens) keep the dark tokens even in light mode. */
+[data-theme="light"] .dark-island {
+  color-scheme: dark;
+  --color-paper: #07040d;
+  --color-paper-deep: #0c0716;
+  --color-white: #120a1f;
+  --color-ink: #f1ecff;
+  --color-ink-2: #d9d0f2;
+  --color-muted: #9b90b8;
+  --color-faint: #6c6288;
+  --color-line: rgb(167 139 250 / 0.13);
+  --color-line-strong: rgb(167 139 250 / 0.3);
+  --color-red: #ff4d8d;
+  --color-violet: #8b5cf6;
+  --color-violet-hi: #b69cff;
+  --color-violet-deep: #2a1250;
+  --color-gold: #f5b53d;
+  --color-gold-hi: #ffd27a;
+  --color-ok: #3ee0a1;
+  --energy-a: #d6c6ff;
+  --energy-b: #c026d3;
+  --dot: rgb(182 156 255 / 0.45);
+  --hud-a: #150c26;
+  --hud-b: #0d0718;
+  --hud-tint: rgb(139 92 246 / 0.07);
+  --hud-edge-1: rgb(182 156 255 / 0.45);
+  --hud-edge-2: rgb(167 139 250 / 0.12);
+  --hud-edge-3: rgb(167 139 250 / 0.3);
+  --hud-diag: rgb(182 156 255 / 0.55);
+  --glass-a: rgb(18 10 31 / 0.92);
+  --glass-b: rgb(12 7 22 / 0.86);
+  color: var(--color-ink);
 }
 
 @media (min-width: 768px) {
@@ -75,20 +171,65 @@ body {
   overflow-x: hidden;
 }
 
-/* Glow + faint HUD grid, painted once on its own GPU layer (no repaint while scrolling). */
-body::before {
+/*
+ * Background: a slow aurora (drifting, composited), orbit rings that echo the flywheel's track (turning, composited)
+ * and a static film grain. Nothing here repaints while scrolling.
+ */
+body::before,
+body::after {
   content: "";
   position: fixed;
-  inset: 0;
   pointer-events: none;
   z-index: -1;
-  transform: translateZ(0);
+}
+
+body::before {
+  inset: -18%;
   background:
-    radial-gradient(1200px 700px at 50% -10%, rgb(124 58 237 / 0.22), transparent 60%),
-    radial-gradient(900px 600px at 100% 40%, rgb(192 38 211 / 0.08), transparent 60%),
-    radial-gradient(900px 700px at 0% 85%, rgb(91 33 182 / 0.12), transparent 60%),
-    linear-gradient(rgb(167 139 250 / 0.03) 1px, transparent 1px) 0 0 / 64px 64px,
-    linear-gradient(90deg, rgb(167 139 250 / 0.03) 1px, transparent 1px) 0 0 / 64px 64px;
+    var(--grain) 0 0 / 180px 180px,
+    radial-gradient(38% 34% at 22% 18%, var(--aurora-a), transparent 70%),
+    radial-gradient(34% 30% at 82% 30%, var(--aurora-b), transparent 70%),
+    radial-gradient(40% 36% at 55% 88%, var(--aurora-c), transparent 72%),
+    radial-gradient(26% 22% at 12% 78%, var(--aurora-d), transparent 70%);
+  will-change: transform;
+  animation: aurora-drift 46s ease-in-out infinite alternate;
+}
+
+body::after {
+  left: 50%;
+  top: -760px;
+  width: 1800px;
+  height: 1800px;
+  margin-left: -900px;
+  background: var(--rings) center / contain no-repeat;
+  opacity: var(--rings-opacity);
+  will-change: transform;
+  animation: rings-turn 240s linear infinite;
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, -2%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-3%, 2%, 0) scale(1.02);
+  }
+}
+
+@keyframes rings-turn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    animation: none;
+  }
 }
 
 ::selection {
@@ -123,7 +264,7 @@ body::before {
 
 .energy-text,
 .energy-text-dark {
-  background: linear-gradient(95deg, #d6c6ff 0%, var(--color-violet-hi) 35%, var(--color-violet) 70%, #c026d3 100%);
+  background: linear-gradient(95deg, var(--energy-a) 0%, var(--color-violet-hi) 35%, var(--color-violet) 70%, var(--energy-b) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -236,14 +377,14 @@ body::before {
 
 .btn-ghost:hover:not(:disabled) {
   background:
-    linear-gradient(#150b26, #150b26) padding-box,
+    linear-gradient(var(--color-paper-deep), var(--color-paper-deep)) padding-box,
     linear-gradient(100deg, var(--color-violet-hi), var(--color-violet)) border-box;
 }
 
 /* bright plate for dark-on-light moments */
 .btn-white {
   background: var(--color-ink);
-  color: #0b0614;
+  color: var(--color-paper);
 }
 
 .btn-white:hover:not(:disabled) {
@@ -293,7 +434,7 @@ body::before {
 .range::-webkit-slider-runnable-track {
   height: 8px;
   background:
-    repeating-linear-gradient(90deg, transparent 0 5px, rgb(7 4 13 / 0.9) 5px 7px),
+    repeating-linear-gradient(90deg, transparent 0 5px, var(--color-white) 5px 7px),
     linear-gradient(90deg, var(--color-violet) 0, var(--color-violet-hi) var(--pct), rgb(167 139 250 / 0.14) var(--pct) 100%);
 }
 
@@ -340,9 +481,9 @@ body::before {
   --bd: rgb(167 139 250 / 0.24);
   position: relative;
   background:
-    linear-gradient(180deg, rgb(139 92 246 / 0.07), rgb(139 92 246 / 0) 40%) padding-box,
-    linear-gradient(160deg, #150c26, #0d0718) padding-box,
-    linear-gradient(160deg, rgb(182 156 255 / 0.45), rgb(167 139 250 / 0.12) 45%, rgb(167 139 250 / 0.3)) border-box;
+    linear-gradient(180deg, var(--hud-tint), transparent 40%) padding-box,
+    linear-gradient(160deg, var(--hud-a), var(--hud-b)) padding-box,
+    linear-gradient(160deg, var(--hud-edge-1), var(--hud-edge-2) 45%, var(--hud-edge-3)) border-box;
   border: 1px solid transparent;
   border-radius: 0;
   clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
@@ -356,7 +497,7 @@ body::before {
   position: absolute;
   width: calc(var(--c) * 1.4142);
   height: 1px;
-  background: rgb(182 156 255 / 0.55);
+  background: var(--hud-diag);
   pointer-events: none;
 }
 
@@ -383,8 +524,8 @@ body::before {
 .card.glass,
 .hud.glass {
   background:
-    linear-gradient(180deg, rgb(18 10 31 / 0.72), rgb(9 5 16 / 0.35)) padding-box,
-    linear-gradient(160deg, rgb(182 156 255 / 0.55), rgb(167 139 250 / 0.12) 45%, rgb(167 139 250 / 0.4)) border-box;
+    linear-gradient(180deg, var(--glass-a), var(--glass-b)) padding-box,
+    linear-gradient(160deg, var(--hud-edge-1), var(--hud-edge-2) 45%, var(--hud-edge-3)) border-box;
 }
 
 /* lighter "sheet" panel, the reference's white plates */
@@ -451,7 +592,7 @@ body::before {
 
 /* dot matrix texture */
 .dots {
-  background-image: radial-gradient(rgb(182 156 255 / 0.45) 1px, transparent 1.2px);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.2px);
   background-size: 7px 7px;
 }
 

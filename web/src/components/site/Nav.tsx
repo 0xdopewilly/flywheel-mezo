@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { useState, type ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { ThemeToggle } from "./ThemeToggle";
 
 const LINKS = [
   { href: "/guide", label: "Start here" },
@@ -45,6 +46,7 @@ export function Nav({ right }: { right?: ReactNode }) {
           <Link href="/guide" className={`focus-ring px-2.5 py-2 font-[family-name:var(--font-display)] text-[14px] font-semibold uppercase tracking-[0.12em] sm:hidden ${path === "/guide" ? "text-ink" : "text-muted"}`}>
             Guide
           </Link>
+          <ThemeToggle className="ml-1" />
           {right ?? (
             <Link href="/app" className="btn btn-ink btn-sm ml-1">
               Launch app

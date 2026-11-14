@@ -23,6 +23,10 @@ You don't need test BTC or an existing veBTC.
 
 Mezo allows one vote per veBTC per epoch, so a second run in the same week skips the vote and only harvests and compounds.
 
+Rewards only become claimable when Mezo's weekly epoch ends, so the app also has a **Fast-forward**. It replays twelve weeks of the loop (vote, rewards, harvest, reinvest) in about a minute from your veBTC's live plan and limits. It is clearly labelled as a projection.
+
+The site has a **light mode**: toggle it in the nav. The 3D hero and the deck stay dark.
+
 ## The problem
 
 A veBTC only earns if someone votes it every week. Each Thursday at 00:00 UTC Mezo opens a new epoch. Someone has to vote the veBTC across the live gauges (17 on testnet, 28 on mainnet), weighing each gauge's incentives against how much veBTC is already voting there. Then they claim incentives and fees from every gauge they voted, and decide whether to buy boost from veMEZO voters. Finally they put the MUSD to work. Most holders vote once and forget, or pile into the most crowded gauge, where each vote earns least.

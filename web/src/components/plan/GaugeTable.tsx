@@ -31,13 +31,13 @@ export function GaugeTable({ plan }: { plan?: LivePlan }) {
   return (
     <section className="card p-5 sm:p-7" aria-labelledby="gauges-title">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 id="gauges-title" className="text-[17px] font-semibold tracking-[-0.015em]">
+        <h2 id="gauges-title" className="font-[family-name:var(--font-display)] text-[20px] font-bold uppercase tracking-[0.08em]">
           What it chose from
         </h2>
-        <p className="text-[13px] text-muted">{m.gauges.length} live gauges on Mezo Earn</p>
+        <p className="text-[12px] uppercase tracking-[0.12em] text-muted">{m.gauges.length} live gauges on Mezo Earn</p>
       </div>
       <div className="mt-4 overflow-hidden">
-        <div className="grid grid-cols-[minmax(0,1.6fr)_repeat(2,minmax(0,1fr))] gap-x-3 border-b border-line pb-2 text-[12.5px] text-muted sm:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
+        <div className="grid grid-cols-[minmax(0,1.6fr)_repeat(2,minmax(0,1fr))] gap-x-3 border-b border-line pb-2 text-[11.5px] font-semibold uppercase tracking-[0.12em] text-violet-hi sm:grid-cols-[minmax(0,1.6fr)_repeat(3,minmax(0,1fr))]">
           <span>Gauge</span>
           <span className="text-right">Rewards</span>
           <span className="hidden text-right sm:block">veBTC voting</span>

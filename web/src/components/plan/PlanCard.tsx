@@ -101,7 +101,7 @@ function PlanBody({ data, refreshing, narrating, variant }: { data: PlanResponse
         <span>
           Plan hash <span className="tnum font-medium text-ink">{shortHex(plan.hash, 10, 6)}</span>, the exact text it publishes on-chain with its vote
         </span>
-        {model && <span className="text-faint">written by {model}</span>}
+        {model && <span className="whitespace-nowrap text-faint">written by {model}</span>}
       </div>
     </div>
   );
@@ -155,7 +155,7 @@ export function Allocation({ votes, compact = false }: { votes: LivePlan["votes"
 export function Bar({ pct, delay = 0, thin = false, tone = "energy" }: { pct: number; delay?: number; thin?: boolean; tone?: "energy" | "ink" | "muted" }) {
   const ref = useRef<HTMLDivElement>(null);
   const seen = useInView(ref, { once: true, margin: "0px 0px -6% 0px" });
-  const bg = tone === "energy" ? ENERGY : tone === "ink" ? "#F1ECFF" : "rgba(241,236,255,0.22)";
+  const bg = tone === "energy" ? ENERGY : tone === "ink" ? "var(--color-ink)" : "color-mix(in srgb, var(--color-ink) 22%, transparent)";
   const target = `${Math.min(100, Math.max(0, pct)) - 100}%`;
   return (
     <div ref={ref} className={`relative mt-2 w-full overflow-hidden bg-violet/[0.14] ${thin ? "h-2" : "h-3.5"}`}>
@@ -167,7 +167,7 @@ export function Bar({ pct, delay = 0, thin = false, tone = "energy" }: { pct: nu
         transition={{ duration: 1.1, ease: EASE, delay: seen ? delay : 0 }}
       />
       {/* segment cuts, so every bar reads as a HUD meter */}
-      <span className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0_5px,#0e0819_5px_7px)]" aria-hidden />
+      <span className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0_5px,var(--color-white)_5px_7px)]" aria-hidden />
     </div>
   );
 }
@@ -235,7 +235,7 @@ function Loop({ plan }: { plan: LivePlan }) {
         <p className="mt-1 text-[13px] leading-snug text-muted">
           {reinvest > 0
             ? `${plan.compound.boostPct}% buys boost${plan.policy.autoSave ? `, ${plan.compound.savePct}% goes to the Savings Vault as sMUSD for you` : ""}.`
-            : "With a reinvest budget, MUSD splits between boost and the Savings Vault."}
+            : "Nothing to reinvest right now: no MUSD in the wallet, or no weekly budget. Harvested rewards get reinvested on a later run."}
         </p>
       </Tile>
     </div>

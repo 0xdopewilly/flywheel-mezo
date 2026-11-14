@@ -301,7 +301,7 @@ export default function DeckPage() {
       </div>
 
       {/* 1. Title */}
-      <section className="slide glow" aria-label="Flywheel">
+      <section className="dark-island slide glow" aria-label="Flywheel">
         <Frame />
         <HeroWheel className="pointer-events-none absolute right-[3.5cqw] top-[46%] h-[42cqw] w-[42cqw] -translate-y-1/2" />
         <div className="slide-in justify-center">
@@ -325,7 +325,7 @@ export default function DeckPage() {
       </section>
 
       {/* 2. Problem */}
-      <section className="slide" aria-label="The problem">
+      <section className="dark-island slide" aria-label="The problem">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">The problem</p>
@@ -357,7 +357,7 @@ export default function DeckPage() {
       </section>
 
       {/* 3. What it does */}
-      <section className="slide" aria-label="What Flywheel does">
+      <section className="dark-island slide" aria-label="What Flywheel does">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">What Flywheel does</p>
@@ -390,7 +390,7 @@ export default function DeckPage() {
       </section>
 
       {/* 4. The brain */}
-      <section className="slide" aria-label="The brain">
+      <section className="dark-island slide" aria-label="The brain">
         <Frame />
         <div className="slide-in">
           <div className="grid h-full grid-cols-[1fr_36cqw] gap-[4cqw]">
@@ -480,7 +480,7 @@ export default function DeckPage() {
       </section>
 
       {/* 5. Guardrails */}
-      <section className="slide" aria-label="Non-custodial guardrails">
+      <section className="dark-island slide" aria-label="Non-custodial guardrails">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">Non-custodial by construction</p>
@@ -519,7 +519,7 @@ export default function DeckPage() {
       </section>
 
       {/* 6. Live on testnet */}
-      <section className="slide" aria-label="Live on Mezo testnet">
+      <section className="dark-island slide" aria-label="Live on Mezo testnet">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">Live on Mezo testnet</p>
@@ -580,7 +580,7 @@ export default function DeckPage() {
       </section>
 
       {/* 7. Mainnet fork */}
-      <section className="slide glow" aria-label="Proven against Mezo mainnet">
+      <section className="dark-island slide glow" aria-label="Proven against Mezo mainnet">
         <Frame />
         <div className="pointer-events-none absolute right-[5cqw] top-1/2 h-[32cqw] w-[32cqw] -translate-y-1/2" aria-hidden>
           <Rings className="absolute inset-0 h-full w-full" />
@@ -612,7 +612,7 @@ export default function DeckPage() {
       </section>
 
       {/* 8. Mezo integration */}
-      <section className="slide" aria-label="Mezo integration">
+      <section className="dark-island slide" aria-label="Mezo integration">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">Built into Mezo, not beside it</p>
@@ -641,7 +641,7 @@ export default function DeckPage() {
       </section>
 
       {/* 9. Business */}
-      <section className="slide" aria-label="Business model">
+      <section className="dark-island slide" aria-label="Business model">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">Business model</p>
@@ -685,7 +685,7 @@ export default function DeckPage() {
       </section>
 
       {/* 10. Roadmap + team */}
-      <section className="slide glow" aria-label="Roadmap and team">
+      <section className="dark-island slide glow" aria-label="Roadmap and team">
         <Frame />
         <div className="slide-in">
           <p className="s-kicker">What&apos;s next</p>

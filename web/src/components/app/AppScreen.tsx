@@ -18,6 +18,7 @@ import { PlanCard } from "@/components/plan/PlanCard";
 import { Countdown } from "@/components/plan/Countdown";
 import { Journal } from "@/components/plan/Journal";
 import { GaugeTable } from "@/components/plan/GaugeTable";
+import { FastForward } from "@/components/plan/FastForward";
 import { FlywheelMark } from "@/components/brand/FlywheelMark";
 import { ConnectPill } from "./ConnectPill";
 import { Positions } from "./Positions";
@@ -232,6 +233,7 @@ export function AppScreen() {
               onRetry={() => planQ.refetch()}
             />
             <GaugeTable plan={planQ.data?.plan} />
+            {planQ.data && <FastForward plan={planQ.data.plan} budget={debounced.pullCap} startMusd={demo ? debounced.pullCap : musdBalance} />}
           </div>
 
           {!demo && address && (

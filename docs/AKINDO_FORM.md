@@ -94,4 +94,4 @@ Testnet deployment. Contract verified; live app at https://flywheel-mezo.vercel.
 - GitHub: https://github.com/0xdopewilly/flywheel-mezo
 - Deck: https://flywheel-mezo.vercel.app/deck (PDF: https://flywheel-mezo.vercel.app/Flywheel-deck.pdf, also docs/Flywheel-deck.pdf in the repo)
 - Contract: https://explorer.test.mezo.org/address/0x22cfe1B060Aa7E10Ae6D114346Cc4f6B8550aab3
-- Pitch video: (link after upload)
+- Pitch video: https://youtu.be/35K6mhQ9tpU

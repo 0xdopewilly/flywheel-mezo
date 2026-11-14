@@ -6,7 +6,7 @@
 - **Contract (Mezo testnet, verified):** [`FlywheelPilot` 0x22cf…aab3](https://explorer.test.mezo.org/address/0x22cfe1B060Aa7E10Ae6D114346Cc4f6B8550aab3)
 - **New to veBTC?** https://flywheel-mezo.vercel.app/guide explains the weekly loop, every term, what Flywheel can't do, and troubleshooting.
 - **Pitch deck:** [docs/Flywheel-deck.pdf](docs/Flywheel-deck.pdf) · https://flywheel-mezo.vercel.app/deck
-- **Video script:** [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md)
+- **2-minute pitch video:** https://youtu.be/35K6mhQ9tpU (script: [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md))
 - **Track:** Mezo WaveHack Wave 2 · built on Mezo testnet (chain 31611), with fork tests against Mezo mainnet (chain 31612)
 
 ---

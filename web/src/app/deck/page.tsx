@@ -291,7 +291,10 @@ export default function DeckPage() {
       <div className="deck-bar">
         <Logo />
         <div className="flex items-center gap-2">
-          <a href="/Flywheel-deck.pdf" className="btn btn-ghost btn-sm">
+          <a href="https://youtu.be/35K6mhQ9tpU" target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">
+            Watch the video
+          </a>
+          <a href="/Flywheel-deck.pdf" className="btn btn-ghost btn-sm hidden sm:inline-flex">
             Download PDF
           </a>
           <Link href="/app" className="btn btn-ink btn-sm hidden sm:inline-flex">
@@ -727,6 +730,7 @@ export default function DeckPage() {
             <div className="text-right text-[1.3cqw] leading-[1.6]">
               <p className="font-[family-name:var(--font-display)] text-[1.6cqw] font-bold tracking-[0.06em] text-gold">flywheel-mezo.vercel.app</p>
               <p className="text-muted">github.com/0xdopewilly/flywheel-mezo</p>
+              <p className="text-muted">Video: youtu.be/35K6mhQ9tpU</p>
             </div>
           </div>
         </div>

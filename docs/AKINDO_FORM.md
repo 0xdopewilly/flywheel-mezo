@@ -44,7 +44,12 @@ What's shown (testnet, not users): FlywheelPilot is deployed and verified on Mez
 
 A mainnet fork test shows Flywheel harvesting exactly the 21.0099 MUSD Mezo owed a real mainnet veBTC (#5803) to its owner, and the owner's cap rejecting an all-in vote on the live mainnet voter. The contract keeps nothing.
 
-Built for newcomers: a Mission panel walks you from "no wallet" to "autopilot armed" in five live-checked steps, explaining what you sign and what can't happen at each one. Limit presets (Safe, Balanced, Bold) help you start, and a /guide page covers the weekly loop, a glossary, safety Q&A and troubleshooting.
+Built for newcomers:
+- **Mission panel:** walks you from "no wallet" to "autopilot armed" in five live-checked steps, explaining what you sign and what can't happen at each one.
+- **Limit presets:** Safe, Balanced and Bold help you start.
+- **Fast-forward:** replays twelve weeks of the loop in a minute from your veBTC's live plan, labelled as a projection, because Mezo epochs can't be sped up.
+- **/guide page:** the weekly loop, a glossary, safety Q&A and troubleshooting.
+- **Dark and light themes.**
 
 How to test: open https://flywheel-mezo.vercel.app/app, connect any wallet and click "Get a test veBTC". Our testnet faucet mints a small veBTC to your wallet, with gas and 15 MUSD. Then approve, enroll and click "Run the brain now" to see your own vote, plan and compound onchain.
 

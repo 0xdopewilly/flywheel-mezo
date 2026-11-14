@@ -102,7 +102,7 @@ export function Mission({
       title: s.wrongChain ? "Switch your wallet to Mezo testnet" : "Connect a wallet",
       body: s.wrongChain
         ? "Flywheel runs on Mezo testnet (chain 31611). Your wallet is on another network, so nothing here would work yet. One click switches it."
-        : "Any EVM wallet works: Mezo Passport, MetaMask, Rabby. You don’t need any crypto: this is Mezo testnet, and the app can hand you everything you need to try it.",
+        : "Pick OKX Wallet, MetaMask, Rabby or any EVM wallet. You don’t need any crypto: this is Mezo testnet, and the app hands you everything you need. Your wallet will be asked to add and switch to Mezo testnet; approve that.",
       sign: s.wrongChain ? "A network switch. No transaction, no cost." : "Nothing. Connecting only shares your address.",
       cta: s.wrongChain ? { label: "Switch network", onClick: onSwitchChain } : { label: "Connect wallet", onClick: onConnect },
     },

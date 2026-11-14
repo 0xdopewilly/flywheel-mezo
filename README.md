@@ -118,7 +118,7 @@ cd ../web && npx vitest run        # optimizer tests
 | **MUSD** `0x1189…c503` | The compounding currency; owner sets an allowance and a weekly cap |
 | **MUSD Savings Vault (sMUSD)** `0x6f46…7A8e16` | Auto-save destination (sMUSD forwarded to the owner) and a votable gauge the brain often favours |
 | **veMEZO** `0xaCE8…111b` | Total voting power and per-gauge votes priced into the boost decision |
-| **Mezo Passport** `@mezo-org/passport` | Wallet connection in the app |
+| **Mezo Passport** `@mezo-org/passport` | `getConfig` sets up wagmi + RainbowKit for Mezo testnet (chain, RPC transports); the picker offers EVM wallets (OKX, MetaMask, Rabby, WalletConnect) |
 
 ## Business model
 

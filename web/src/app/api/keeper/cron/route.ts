@@ -13,12 +13,18 @@ export async function GET(req: NextRequest) {
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
-  const ids = (await publicClient().readContract({ address: pilotAddress(), abi: pilotAbi, functionName: "enrolledIds" })) as bigint[];
+  // ?showcase=1 (Thursday after the epoch flips): only our own demo positions, voting at once, so the public
+  // journal shows each new epoch's plan promptly. Every other veBTC keeps the late-vote schedule.
+  const showcase = req.nextUrl.searchParams.get("showcase") === "1";
+  const showcaseIds = (process.env.SHOWCASE_IDS ?? "1752,1753,1755").split(",").map((x) => BigInt(x.trim()));
+  const ids = showcase
+    ? showcaseIds
+    : ((await publicClient().readContract({ address: pilotAddress(), abi: pilotAbi, functionName: "enrolledIds" })) as bigint[]);
   const market = await snapshotMarket();
   const results: { tokenId: string; actions?: unknown; error?: string }[] = [];
   for (const id of ids) {
     try {
-      const { actions } = await runPilot(id, market, "cron");
+      const { actions } = await runPilot(id, market, showcase ? "manual" : "cron");
       results.push({ tokenId: id.toString(), actions });
     } catch (e) {
       results.push({ tokenId: id.toString(), error: (e as Error).message.slice(0, 200) });

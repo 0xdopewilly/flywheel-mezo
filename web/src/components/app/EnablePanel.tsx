@@ -90,6 +90,14 @@ export function EnablePanel({
   const approveTx = useTx();
   const enrollTx = useTx();
   const musdTx = useTx();
+  // editing the limits after a save starts a fresh save (and a fresh budget approval for a new weekly amount)
+  const policyKey = `${chainPolicy.maxPoolShareBps}:${chainPolicy.boostShareBps}:${chainPolicy.minPools}:${chainPolicy.autoSave}:${chainPolicy.epochPullCap}`;
+  const { reset: resetEnroll } = enrollTx;
+  const { reset: resetMusd } = musdTx;
+  useEffect(() => {
+    resetEnroll();
+    resetMusd();
+  }, [policyKey, resetEnroll, resetMusd]);
 
   const refresh = () => reads.refetch();
 
@@ -278,7 +286,9 @@ function Step({
   optional?: boolean;
 }) {
   const busy = tx?.status === "signing" || tx?.status === "mining";
-  const done = state === "done" || tx?.status === "done";
+  // Done means the chain says so. A just-finished tx counts as done only while the chain read catches up;
+  // if the limits change again, the step re-opens with its button.
+  const done = state === "done" || (tx?.status === "done" && state !== "ready");
   return (
     <li className={`rounded-[3px] p-4 transition-colors duration-500 ${done ? "bg-lime/70" : state === "ready" ? "bg-paper" : "bg-paper/50"}`}>
       <div className="flex gap-3.5">

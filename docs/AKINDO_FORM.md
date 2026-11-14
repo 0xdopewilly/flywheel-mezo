@@ -87,7 +87,7 @@ Testnet deployment. Contract verified; live app at https://flywheel-mezo.vercel.
 3. **Managed veBTC for small holders (Q2 2027):** use Mezo managed locks so holders too small to justify gas can join a shared, Flywheel-piloted position.
 
 **Team**
-0xdopewilly, solo builder (contracts, brain, keeper, frontend). X: @sentinel_dapper · GitHub: github.com/0xdopewilly
+0xdopewilly, solo builder (contracts, brain, keeper, frontend). X: @sentinel_dapper · Discord: @dopewilly · GitHub: github.com/0xdopewilly
 
 **Links**
 - Live app: https://flywheel-mezo.vercel.app

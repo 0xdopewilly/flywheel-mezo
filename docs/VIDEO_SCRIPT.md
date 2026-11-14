@@ -1,6 +1,6 @@
 # Flywheel pitch video: script and shot list
 
-Length 1:59.7 · 2560×1440 at 60 fps · H.264. Voice: Andrew (edge-tts, en-US-AndrewMultilingualNeural, +6% to +12%). Music bed: Mixkit 738, ducked under the voice.
+Length 1:59.4 · 2560×1440 at 60 fps · H.264. Voice: Andrew (edge-tts, en-US-AndrewMultilingualNeural, +6% to +12%). Music bed: Mixkit 738, ducked under the voice.
 
 The footage is the site at commit deb7ad3, served locally from a production build, plus Mezo's testnet explorer. It was recorded in slow motion and retimed to 60 fps. The landing page was recorded at 0.025× so the software-rendered 3D wheel stays smooth, and /app at 0.1×.
 
